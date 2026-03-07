@@ -1,0 +1,36 @@
+================================================================================
+                     SCHEDULR - STUDENT PROFILE
+================================================================================
+
+PERSONAL INFORMATION
+-------------------
+System ID      : 22
+Student ID     : N/A
+Full Name       : Nadia Buari
+Email           : nadia.buari@ashesi.edu.gh
+Profile Created : 2026-02-07 21:39:35
+
+ACADEMIC INFORMATION
+-------------------
+Program/Major   : Computer Science
+Current Year    : Year 4
+Academic Year   : 2026
+Current GPA     : 2.98 / 4.0
+
+COMPLETED COURSES
+-------------------
+Total Completed : 9 courses
+
+1. CS 111 - Introduction to Computing & Information Systems
+2. CS 112 - Computer Programming for Engineering
+3. CS 212 - Computer Programming for Computer Science
+4. CS 312 - Intermediate Computer Programming
+5. CS 331 - Computer Organization and Architecture
+6. CS 341 - Web Technologies
+7. CS 400 - Thesis
+8. GEN 206 - Entrepreneurship Universe
+9. SOAN 221 - Leadership Seminar 2
+
+================================================================================
+                     END OF PROFILE
+================================================================================

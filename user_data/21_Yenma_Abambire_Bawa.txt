@@ -1,0 +1,28 @@
+================================================================================
+                     SCHEDULR - STUDENT PROFILE
+================================================================================
+
+PERSONAL INFORMATION
+-------------------
+System ID      : 21
+Student ID     : N/A
+Full Name       : Yenma Abambire Bawa
+Email           : abambirebawayenma@gmail.com
+Profile Created : 2026-02-07 21:33:46
+
+ACADEMIC INFORMATION
+-------------------
+Program/Major   : Computer Science
+Current Year    : Year 1
+Academic Year   : 2026
+Current GPA     : 3.8 / 4.0
+
+COMPLETED COURSES
+-------------------
+Total Completed : 1 courses
+
+1. CS 314 - Human Computer Interaction
+
+================================================================================
+                     END OF PROFILE
+================================================================================

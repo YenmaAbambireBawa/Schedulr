@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#dc2626">
+  <meta name="description" content="About Schedulr - Automated Course Registration System for Ashesi University">
+  <title>About Schedulr | Automated Course Registration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #dc2626;
+      --primary-dark: #b91c1c;
+      --primary-light: #ef4444;
+      --accent: #991b1b;
+      --accent-dark: #7f1d1d;
+      --dark: #1a1a1a;
+      --dark-soft: #2d2d2d;
+      --gray: #6b7280;
+      --light: #f9fafb;
+      --white: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--white);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(220, 38, 38, 0.1);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .navbar.scrolled {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 20px;
+      color: white;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-icon:hover {
+      transform: rotate(-5deg) scale(1.05);
+    }
+
+    .logo-text {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--dark);
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 15px;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--primary);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+    }
+
+    /* Page Header */
+    .page-header {
+      padding: 140px 40px 80px;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark-soft) 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 56px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .page-header p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0.9;
+      line-height: 1.8;
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Story Section */
+    .story {
+      padding: 100px 40px;
+      background: white;
+    }
+
+    .story-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .story-image {
+      position: relative;
+    }
+
+    .story-img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .story-content h2 {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 24px;
+    }
+
+    .story-content h2 .highlight {
+      color: var(--primary);
+    }
+
+    .story-content p {
+      font-size: 16px;
+      color: var(--gray);
+      line-height: 1.9;
+      margin-bottom: 20px;
+    }
+
+    /* Mission Section */
+    .mission {
+      padding: 100px 40px;
+      background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+    }
+
+    .mission-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .mission-card {
+      padding: 50px 40px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .mission-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(220, 38, 38, 0.15);
+    }
+
+    .mission-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: white;
+      margin: 0 auto 30px;
+      font-weight: 700;
+    }
+
+    .mission-card h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 16px;
+    }
+
+    .mission-card p {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.8;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .section-subtitle {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 20px;
+    }
+
+    .section-description {
+      font-size: 18px;
+      color: var(--gray);
+      line-height: 1.8;
+    }
+
+    /* Team Section */
+    .team {
+      padding: 100px 40px;
+      background: white;
+    }
+
+    .team-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .team-member {
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .team-member:hover {
+      transform: translateY(-10px);
+    }
+
+    .team-photo {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .team-role {
+      font-size: 14px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Impact Section */
+    .impact {
+      padding: 100px 40px;
+      background: var(--dark);
+      color: white;
+    }
+
+    .impact-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .impact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      margin-top: 60px;
+    }
+
+    .impact-image-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .impact-img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    .impact-img.tall {
+      grid-row: span 2;
+      height: 520px;
+    }
+
+    .impact-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .impact-stat {
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      border: 2px solid rgba(220, 38, 38, 0.3);
+    }
+
+    .impact-number {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--primary-light);
+      margin-bottom: 12px;
+    }
+
+    .impact-label {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 100px 40px;
+      background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+      text-align: center;
+    }
+
+    .cta-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cta h2 {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 24px;
+    }
+
+    .cta p {
+      font-size: 18px;
+      color: var(--gray);
+      margin-bottom: 40px;
+      line-height: 1.8;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 60px 40px 30px;
+      background: var(--dark-soft);
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand h3 {
+      font-size: 24px;
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    .footer-brand p {
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .footer-column h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 12px;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary-light);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 14px;
+    }
+
+    /* Mobile Menu Toggle */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .menu-toggle span {
+      width: 25px;
+      height: 3px;
+      background: var(--dark);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      .nav-menu {
+        display: none;
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+
+      .page-header h1 {
+        font-size: 42px;
+      }
+
+      .story-container,
+      .impact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mission-grid,
+      .team-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .impact-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-header h1 {
+        font-size: 32px;
+      }
+
+      .section-title {
+        font-size: 32px;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">S</div>
+        <span class="logo-text">Schedulr</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link active">About</a></li>
+        <li><a href="index.html#features" class="nav-link">Features</a></li>
+        <li><a href="index.html#campus" class="nav-link">Campus</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="schedulr-login.html" class="btn btn-outline">Login</a>
+        <a href="schedulr-login.html" class="btn btn-primary">Get Started</a>
+      </div>
+      <div class="menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <h1>About Schedulr</h1>
+    <p>
+      Transforming course registration for Ashesi University students through intelligent automation 
+      and innovative technology solutions.
+    </p>
+  </section>
+
+  <!-- Story Section -->
+  <section class="story">
+    <div class="story-container">
+      <div class="story-image">
+        <img src="images/studentscollaborating.jpg" alt="Students Collaborating" class="story-img">
+      </div>
+      <div class="story-content">
+        <h2>Built by Students, <span class="highlight">For Students</span></h2>
+        <p>
+          Schedulr was born from the frustration of manual course registration processes. As Ashesi students ourselves, 
+          we experienced firsthand the stress of competing for limited seats, managing schedule conflicts, and 
+          navigating complex registration procedures.
+        </p>
+        <p>
+          We realized that technology could eliminate these pain points. What started as a simple automation script 
+          evolved into a comprehensive platform that now serves the entire Ashesi community.
+        </p>
+        <p>
+          Today, Schedulr processes thousands of course registrations each semester, saving students countless hours 
+          and reducing registration-related stress to near zero. Our mission is to ensure every Ashesi student can 
+          focus on learning, not on administrative logistics.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission Section -->
+  <section class="mission">
+    <div class="mission-container">
+      <div class="section-header">
+        <p class="section-subtitle">Our Values</p>
+        <h2 class="section-title">What Drives Us</h2>
+        <p class="section-description">
+          We're committed to building technology that serves the Ashesi community and empowers students 
+          to take control of their academic journey.
+        </p>
+      </div>
+      <div class="mission-grid">
+        <div class="mission-card">
+          <div class="mission-icon">→</div>
+          <h3>Speed</h3>
+          <p>
+            We believe registration should take seconds, not hours. Our automated system ensures you never 
+            miss out on the courses you need.
+          </p>
+        </div>
+        <div class="mission-card">
+          <div class="mission-icon">★</div>
+          <h3>Reliability</h3>
+          <p>
+            When registration opens, every second counts. Our infrastructure is built to handle peak loads 
+            without fail, 24/7.
+          </p>
+        </div>
+        <div class="mission-card">
+          <div class="mission-icon">■</div>
+          <h3>Transparency</h3>
+          <p>
+            You deserve to know what's happening with your registration. We provide real-time updates and 
+            clear communication at every step.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="team">
+    <div class="team-container">
+      <div class="section-header">
+        <p class="section-subtitle">Meet The Team</p>
+        <h2 class="section-title">Built by Ashesi Students</h2>
+        <p class="section-description">
+          A dedicated developer, and student working to improve 
+          the academic experience at Ashesi.
+        </p>
+      </div>
+      <div class="team-grid">
+        <div class="Developer">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="Team Member" class="team-photo">
+          <h4 class="team-name">Yenma Abambire Bawa</h4>
+          <p class="team-role">Class of 2026 | Computer Science Major</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Section -->
+  <section class="impact">
+    <div class="impact-container">
+      <div class="section-header">
+        <p class="section-subtitle">Our Impact</p>
+        <h2 class="section-title" style="color: white;">Making a Difference at Ashesi</h2>
+        <p class="section-description" style="color: rgba(255, 255, 255, 0.8);">
+          Since our launch, we've helped thousands of students navigate course registration with ease and confidence.
+        </p>
+      </div>
+      <div class="impact-grid">
+        <div class="impact-image-container">
+          <img src="images/campuslife.jpg" alt="Campus Life" class="impact-img tall">
+          <img src="images/students.jpg" alt="Students" class="impact-img">
+          <img src="images/learning.jpg" alt="Learning" class="impact-img">
+        </div>
+        <div>
+          <div class="impact-stats">
+            <div class="impact-stat">
+              <div class="impact-number">1,500+</div>
+              <div class="impact-label">Students using Schedulr every semester</div>
+            </div>
+            <div class="impact-stat">
+              <div class="impact-number">5,000+</div>
+              <div class="impact-label">Successful course registrations completed</div>
+            </div>
+            <div class="impact-stat">
+              <div class="impact-number">30sec</div>
+              <div class="impact-label">Average time to complete registration</div>
+            </div>
+            <div class="impact-stat">
+              <div class="impact-number">98%</div>
+              <div class="impact-label">Student satisfaction rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="cta-container">
+      <h2>Join the Schedulr Community</h2>
+      <p>
+        Experience the future of course registration at Ashesi University. 
+        Sign up today and join thousands of students who have simplified their academic planning.
+      </p>
+      <div class="cta-buttons">
+        <a href="schedulr-login.html" class="btn btn-primary">Get Started Free</a>
+        <a href="index.html" class="btn btn-outline">Back to Home</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h3>Schedulr</h3>
+        <p>
+          Automated course registration system designed exclusively for Ashesi University students. 
+          Making academic planning simple, fast, and stress-free.
+        </p>
+      </div>
+      <div class="footer-column">
+        <h4>Product</h4>
+        <ul class="footer-links">
+          <li><a href="index.html#features">Features</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Resources</h4>
+        <ul class="footer-links">
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Tutorials</a></li>
+          <li><a href="#">Support</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Legal</h4>
+        <ul class="footer-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Schedulr. All rights reserved. Built for Ashesi University.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Mobile menu toggle
+    function toggleMenu() {
+      const navMenu = document.querySelector('.nav-menu');
+      navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

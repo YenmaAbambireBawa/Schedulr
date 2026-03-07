@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="description" content="Schedulr - Automated Course Registration for Students">
+  <title>Schedulr | Student Login & Registration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #dc2626;
+      --primary-dark: #b91c1c;
+      --primary-light: #ef4444;
+      --accent: #991b1b;
+      --accent-dark: #7f1d1d;
+      --dark: #1a1a1a;
+      --dark-soft: #2d2d2d;
+      --gray: #6b7280;
+      --light: #f9fafb;
+      --white: #ffffff;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background elements */
+    .bg-decoration {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .floating-shape {
+      position: absolute;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      opacity: 0.03;
+      border-radius: 50%;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .shape-1 {
+      width: 600px;
+      height: 600px;
+      top: -200px;
+      left: -200px;
+      animation-delay: 0s;
+    }
+
+    .shape-2 {
+      width: 400px;
+      height: 400px;
+      bottom: -100px;
+      right: -100px;
+      animation-delay: 5s;
+    }
+
+    .shape-3 {
+      width: 300px;
+      height: 300px;
+      top: 50%;
+      right: 10%;
+      animation-delay: 10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -30px) scale(1.05); }
+      50% { transform: translate(-20px, 20px) scale(0.95); }
+      75% { transform: translate(20px, 30px) scale(1.02); }
+    }
+
+    /* Grid overlay */
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(220, 38, 38, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(220, 38, 38, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      width: 100%;
+      display: flex;
+      gap: 40px;
+      align-items: stretch;
+    }
+
+    /* Logo and branding section */
+    .brand-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 30px;
+      padding: 40px;
+      animation: slideInLeft 0.8s ease-out;
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      text-decoration: none;
+    }
+
+    .logo-container:hover {
+      transform: translateX(-5px);
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: 28px;
+      color: white;
+      box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+      animation: pulse 3s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 15px 40px rgba(220, 38, 38, 0.5); }
+    }
+
+    .brand-name {
+      font-size: 42px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--white), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+    }
+
+    .brand-tagline {
+      color: var(--light);
+      font-size: 18px;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .brand-features {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--light);
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .feature-item:nth-child(1) { animation-delay: 0.3s; }
+    .feature-item:nth-child(2) { animation-delay: 0.5s; }
+    .feature-item:nth-child(3) { animation-delay: 0.7s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      background: rgba(220, 38, 38, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--primary-light);
+      font-weight: 700;
+    }
+
+    /* Form section */
+    .form-section {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideInRight 0.8s ease-out;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .form-header {
+      margin-bottom: 30px;
+    }
+
+    .form-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .form-subtitle {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .role-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .role-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--gray);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .role-btn:hover {
+      color: var(--white);
+    }
+
+    .role-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+    }
+
+    .form-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--gray);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--white);
+    }
+
+    .tab-btn.active {
+      background: rgba(220, 38, 38, 0.15);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+
+    .form-content {
+      display: none;
+    }
+
+    .form-content.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      color: var(--light);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: var(--white);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .form-input::placeholder {
+      color: var(--gray);
+    }
+
+    .form-input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .checkbox-input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .checkbox-label {
+      color: var(--light);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      color: var(--primary-light);
+      text-decoration: none;
+      font-size: 14px;
+      float: right;
+      transition: color 0.3s ease;
+    }
+
+    .forgot-link:hover {
+      color: var(--accent);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 12px;
+      color: var(--white);
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(220, 38, 38, 0.5);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 25px 0;
+      color: var(--gray);
+      font-size: 13px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .alternate-action {
+      text-align: center;
+      color: var(--gray);
+      font-size: 14px;
+      margin-top: 20px;
+    }
+
+    .alternate-link {
+      color: var(--primary-light);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .alternate-link:hover {
+      color: var(--accent);
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--gray);
+      font-size: 13px;
+      z-index: 1;
+    }
+
+    .footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+      color: var(--accent);
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      .container {
+        flex-direction: column;
+        max-width: 500px;
+      }
+
+      .brand-section {
+        padding: 20px;
+        text-align: center;
+      }
+
+      .logo-container {
+        justify-content: center;
+      }
+
+      .brand-features {
+        display: none;
+      }
+
+      .brand-name {
+        font-size: 36px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-section {
+        padding: 30px 20px;
+      }
+
+      .form-title {
+        font-size: 26px;
+      }
+
+      .role-selector {
+        flex-direction: column;
+      }
+    }
+
+    /* Success/Error messages */
+    .message {
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .message.success {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .message.error {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--error);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .message.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background decorations -->
+  <div class="bg-decoration">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+  </div>
+  <div class="grid-overlay"></div>
+
+  <div class="container">
+    <!-- Brand Section -->
+    <div class="brand-section">
+      <a href="index.html" class="logo-container">
+        <div class="logo">S</div>
+        <div class="brand-name">Schedulr</div>
+      </a>
+      <p class="brand-tagline">
+        Automated course registration that works smarter, not harder. 
+        Register for your classes instantly without the stress.
+      </p>
+      <div class="brand-features">
+        <div class="feature-item">
+          <div class="feature-icon">→</div>
+          <span>Lightning-fast registration</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">★</div>
+          <span>Smart schedule optimization</span>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">•</div>
+          <span>Real-time notifications</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="form-section">
+      <div class="form-header">
+        <h1 class="form-title">Welcome Back</h1>
+        <p class="form-subtitle">Access your account to manage course registration</p>
+      </div>
+
+      <!-- Role Selector -->
+      <div class="role-selector">
+        <button class="role-btn active" onclick="selectRole('student')">
+          Student
+        </button>
+        <button class="role-btn" onclick="selectRole('admin')">
+          Admin
+        </button>
+      </div>
+
+      <!-- Form Tabs -->
+      <div class="form-tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+        <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Messages -->
+      <div id="message" class="message"></div>
+
+      <!-- Login Form -->
+      <div id="login-form" class="form-content active">
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input 
+              type="email" 
+              id="login-email" 
+              class="form-input" 
+              placeholder="you@email.com" 
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input 
+              type="password" 
+              id="login-password" 
+              class="form-input" 
+              placeholder="Enter your password" 
+              required
+            />
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="remember-me" class="checkbox-input" />
+            <label for="remember-me" class="checkbox-label">Keep me signed in</label>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <span id="login-btn-text">Log In</span>
+          </button>
+        </form>
+
+        <div class="divider">or continue with</div>
+
+        <div class="alternate-action">
+          Don't have an account? 
+          <a href="#" class="alternate-link" onclick="switchTab('signup'); return false;">Sign up now</a>
+        </div>
+      </div>
+
+      <!-- Sign Up Form -->
+      <div id="signup-form" class="form-content">
+        <form onsubmit="handleSignup(event)">
+          <div class="form-group">
+            <label class="form-label" for="signup-name">Full Name</label>
+            <input 
+              type="text" 
+              id="signup-name" 
+              class="form-input" 
+              placeholder="John Doe" 
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signup-email">Working Gmail Address</label>
+            <input 
+              type="email" 
+              id="signup-email" 
+              class="form-input" 
+              placeholder="you@university.edu" 
+              required
+            />
+          </div>
+
+          <div class="form-group" id="student-id-group">
+            <label class="form-label" for="signup-student-id">Student ID</label>
+            <input 
+              type="text" 
+              id="signup-student-id" 
+              class="form-input" 
+              placeholder="Enter your student ID" 
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signup-password">Password</label>
+            <input 
+              type="password" 
+              id="signup-password" 
+              class="form-input" 
+              placeholder="Create a strong password" 
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signup-confirm-password">Confirm Password</label>
+            <input 
+              type="password" 
+              id="signup-confirm-password" 
+              class="form-input" 
+              placeholder="Re-enter your password" 
+              required
+            />
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms-agreement" class="checkbox-input" required />
+            <label for="terms-agreement" class="checkbox-label">
+              I agree to the Terms of Service and Privacy Policy
+            </label>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <span id="signup-btn-text">Create Account</span>
+          </button>
+        </form>
+
+        <div class="alternate-action">
+          Already have an account? 
+          <a href="#" class="alternate-link" onclick="switchTab('login'); return false;">Log in here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 Schedulr. <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="#">Support</a></p>
+  </footer>
+
+  <script>
+    // Configuration
+    const API_BASE_URL = '/schedulr/api';
+
+    let currentRole = 'student';
+
+    function selectRole(role) {
+      currentRole = role;
+      const buttons = document.querySelectorAll('.role-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.closest('.role-btn').classList.add('active');
+
+      // Update form titles
+      const formTitle = document.querySelector('.form-title');
+      const formSubtitle = document.querySelector('.form-subtitle');
+      
+      if (role === 'admin') {
+        formTitle.textContent = 'Admin Access';
+        formSubtitle.textContent = 'Manage courses and student registrations';
+        
+        // Hide student ID field for admin signup
+        const studentIdGroup = document.getElementById('student-id-group');
+        if (studentIdGroup) {
+          studentIdGroup.style.display = 'none';
+          document.getElementById('signup-student-id').removeAttribute('required');
+        }
+      } else {
+        formTitle.textContent = 'Welcome Back';
+        formSubtitle.textContent = 'Access your account to manage course registration';
+        
+        // Show student ID field for student signup
+        const studentIdGroup = document.getElementById('student-id-group');
+        if (studentIdGroup) {
+          studentIdGroup.style.display = 'block';
+          document.getElementById('signup-student-id').setAttribute('required', 'required');
+        }
+      }
+    }
+
+    function switchTab(tab) {
+      // Update tab buttons
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      
+      if (tab === 'login') {
+        tabButtons[0].classList.add('active');
+      } else {
+        tabButtons[1].classList.add('active');
+      }
+
+      // Update form content
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+      
+      if (tab === 'login') {
+        loginForm.classList.add('active');
+        signupForm.classList.remove('active');
+      } else {
+        loginForm.classList.remove('active');
+        signupForm.classList.add('active');
+      }
+
+      // Clear any messages
+      hideMessage();
+    }
+
+    function showMessage(text, type) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = text;
+      messageDiv.className = `message ${type} show`;
+    }
+
+    function hideMessage() {
+      const messageDiv = document.getElementById('message');
+      messageDiv.classList.remove('show');
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const rememberMe = document.getElementById('remember-me').checked;
+      
+      // Update button state
+      const submitBtn = event.target.querySelector('.submit-btn');
+      const btnText = document.getElementById('login-btn-text');
+      btnText.textContent = 'Logging in...';
+      submitBtn.disabled = true;
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/login.php`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+            role: currentRole,
+            remember_me: rememberMe
+          })
+        });
+
+        const data = await response.json();
+        
+        console.log('Login response:', data); // Debug log
+
+        if (data.success) {
+          showMessage(data.message, 'success');
+          
+          // Store user data in sessionStorage
+          if (data.data && data.data.user) {
+            sessionStorage.setItem('user', JSON.stringify(data.data.user));
+          }
+          
+          // Redirect after successful login - check multiple possible locations for redirect_url
+          const redirectUrl = data.data?.redirect_url || data.redirect_url || '/schedulr/student/dashboard.php';
+          
+          setTimeout(() => {
+            window.location.href = redirectUrl;
+          }, 1000);
+        } else {
+          showMessage(data.message || 'Login failed', 'error');
+          btnText.textContent = 'Log In';
+          submitBtn.disabled = false;
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        showMessage('An error occurred. Please try again.', 'error');
+        btnText.textContent = 'Log In';
+        submitBtn.disabled = false;
+      }
+    }
+
+    async function handleSignup(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const confirmPassword = document.getElementById('signup-confirm-password').value;
+      const studentId = document.getElementById('signup-student-id')?.value;
+      const termsAgreed = document.getElementById('terms-agreement').checked;
+      
+      // Validate passwords match
+      if (password !== confirmPassword) {
+        showMessage('Passwords do not match!', 'error');
+        return;
+      }
+
+      if (!termsAgreed) {
+        showMessage('You must agree to the Terms of Service and Privacy Policy', 'error');
+        return;
+      }
+      
+      // Update button state
+      const submitBtn = event.target.querySelector('.submit-btn');
+      const btnText = document.getElementById('signup-btn-text');
+      btnText.textContent = 'Creating account...';
+      submitBtn.disabled = true;
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/register.php`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            full_name: name,
+            email: email,
+            password: password,
+            confirm_password: confirmPassword,
+            student_id: studentId,
+            role: currentRole,
+            terms_agreed: termsAgreed
+          })
+        });
+
+        const data = await response.json();
+        
+        console.log('Signup response:', data); // Debug log
+
+        if (data.success) {
+          showMessage(data.message + ' Redirecting...', 'success');
+          
+          // Store user data in sessionStorage
+          if (data.data && data.data.user) {
+            sessionStorage.setItem('user', JSON.stringify(data.data.user));
+          }
+          
+          // Redirect after successful signup - check multiple possible locations for redirect_url
+          const redirectUrl = data.data?.redirect_url || data.redirect_url || 
+                             (currentRole === 'admin' ? '/schedulr/admin/dashboard.php' : '/schedulr/student/questionnaire.php');
+          
+          console.log('Redirecting to:', redirectUrl); // Debug log
+          
+          setTimeout(() => {
+            window.location.href = redirectUrl;
+          }, 1000);
+        } else {
+          showMessage(data.message || 'Signup failed', 'error');
+          btnText.textContent = 'Create Account';
+          submitBtn.disabled = false;
+        }
+      } catch (error) {
+        console.error('Signup error:', error);
+        showMessage('An error occurred. Please try again.', 'error');
+        btnText.textContent = 'Create Account';
+        submitBtn.disabled = false;
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Add smooth scroll behavior
+      document.documentElement.style.scrollBehavior = 'smooth';
+      
+      // Add enter key support for forms
+      document.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const form = e.target.closest('form');
+            if (form) {
+              form.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

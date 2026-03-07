@@ -1,0 +1,50 @@
+================================================================================
+                     SCHEDULR - STUDENT PROFILE
+================================================================================
+
+PERSONAL INFORMATION
+-------------------
+System ID      : 17
+Student ID     : N/A
+Full Name       : Yenmalia Bawa
+Email           : lia.bawa@ashesi.edu.gh
+Profile Created : 2026-02-05 17:01:29
+
+ACADEMIC INFORMATION
+-------------------
+Program/Major   : Computer Science
+Current Year    : Year 3
+Academic Year   : 2026
+Current GPA     : 2.86 / 4.0
+
+COMPLETED COURSES
+-------------------
+Total Completed : 23 courses
+
+1. CS 111 - Introduction to Computing & Information Systems
+2. CS 212 - Computer Programming for Computer Science
+3. CS 221 - Discrete Theory and Structures
+4. CS 312 - Intermediate Computer Programming
+5. CS 313 - Intermediate Computer Programming
+6. CS 323 - Database Systems
+7. CS 331 - Computer Organization and Architecture
+8. CS 341 - Web Technologies
+9. CS 400 - Thesis
+10. CS 415 - Software Engineering
+11. CS 422 - Data Structures & Algorithms
+12. CS 435 - Operating Systems
+13. CS 452-ML - Machine Learning
+14. CS 454 - Artificial Intelligence
+15. CS 456 - Algorithm Design and Analysis
+16. ENGL 112 - Written and Oral Communication
+17. ENGL 113 - Text and Meaning
+18. GEN 101 - Neo-Traditional African Dance Forms
+19. SOAN 111 - Leadership Seminar 1
+20. SOAN 221 - Leadership Seminar 2
+21. SOAN 311 - Leadership Seminar 3
+22. SOAN 325 - Research Methods
+23. SOAN 411 - Leadership Seminar 4
+
+================================================================================
+                     END OF PROFILE
+================================================================================

@@ -1,0 +1,30 @@
+================================================================================
+                     SCHEDULR - STUDENT PROFILE
+================================================================================
+
+PERSONAL INFORMATION
+-------------------
+System ID      : 25
+Student ID     : N/A
+Full Name       : Zaya Bawa
+Email           : zayabawa2017@gmail.com
+Profile Created : 2026-02-18 19:31:24
+
+ACADEMIC INFORMATION
+-------------------
+Program/Major   : Computer Science
+Current Year    : Year 1
+Academic Year   : 2026
+Current GPA     : 3.4 / 4.0
+
+COMPLETED COURSES
+-------------------
+Total Completed : 3 courses
+
+1. CS 111 - Introduction to Computing & Information Systems
+2. CS 323 - Database Systems
+3. CS 415 - Software Engineering
+
+================================================================================
+                     END OF PROFILE
+================================================================================

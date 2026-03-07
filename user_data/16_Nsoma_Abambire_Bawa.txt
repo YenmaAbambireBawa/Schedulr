@@ -1,0 +1,49 @@
+================================================================================
+                     SCHEDULR - STUDENT PROFILE
+================================================================================
+
+PERSONAL INFORMATION
+-------------------
+System ID      : 16
+Full Name       : Nsoma Abambire Bawa
+Email           : naboy@ashesi.edu.gh
+Profile Created : 2026-02-05 16:56:10
+
+ACADEMIC INFORMATION
+-------------------
+Program/Major   : Computer Science
+Current Year    : Year 4
+Academic Year   : 2026
+Current GPA     : 3.2 / 4.0
+
+COMPLETED COURSES
+-------------------
+Total Completed : 23 courses
+
+1. CS 111 - Unknown Course
+2. CS 212 - Unknown Course
+3. CS 221 - Unknown Course
+4. CS 312 - Unknown Course
+5. CS 313 - Unknown Course
+6. CS 323 - Unknown Course
+7. CS 331 - Unknown Course
+8. CS 341 - Unknown Course
+9. CS 400 - Unknown Course
+10. CS 415 - Unknown Course
+11. CS 422 - Unknown Course
+12. CS 435 - Unknown Course
+13. CS 452-ML - Unknown Course
+14. CS 454 - Unknown Course
+15. CS 456 - Unknown Course
+16. ENGL 112 - Unknown Course
+17. ENGL 113 - Unknown Course
+18. GEN 101 - Unknown Course
+19. SOAN 111 - Unknown Course
+20. SOAN 221 - Unknown Course
+21. SOAN 311 - Unknown Course
+22. SOAN 325 - Unknown Course
+23. SOAN 411 - Unknown Course
+
+================================================================================
+                     END OF PROFILE
+================================================================================

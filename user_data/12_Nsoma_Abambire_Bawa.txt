@@ -1,0 +1,33 @@
+================================================================================
+                     SCHEDULR - STUDENT PROFILE
+================================================================================
+
+PERSONAL INFORMATION
+-------------------
+Student ID      : 12
+Full Name       : Nsoma Abambire Bawa
+Email           : nab@ashesi.edu.gh
+Profile Created : 2026-02-04 13:42:10
+
+ACADEMIC INFORMATION
+-------------------
+Program/Major   : Computer Science
+Current Year    : Year 3
+Academic Year   : 2026
+Current GPA     : 3.4 / 4.0
+
+COMPLETED COURSES
+-------------------
+Total Completed : 7 courses
+
+1. CS101 - Introduction to Computer Science
+2. CS102 - Programming Fundamentals
+3. MATH101 - Calculus I
+4. MATH102 - Discrete Mathematics
+5. CS404 - Mobile App Development
+6. CS405 - Cloud Computing
+7. CS406 - Capstone Project
+
+================================================================================
+                     END OF PROFILE
+================================================================================

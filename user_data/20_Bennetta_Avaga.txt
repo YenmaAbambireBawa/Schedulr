@@ -1,0 +1,28 @@
+================================================================================
+                     SCHEDULR - STUDENT PROFILE
+================================================================================
+
+PERSONAL INFORMATION
+-------------------
+System ID      : 20
+Student ID     : N/A
+Full Name       : Bennetta Avaga
+Email           : bennetta.avaga@ashesi.edu.gh
+Profile Created : 2026-02-07 21:26:41
+
+ACADEMIC INFORMATION
+-------------------
+Program/Major   : Computer Science
+Current Year    : Year 3
+Academic Year   : 2026
+Current GPA     : 2.9 / 4.0
+
+COMPLETED COURSES
+-------------------
+Total Completed : 1 courses
+
+1. SOAN 111 - Leadership Seminar 1
+
+================================================================================
+                     END OF PROFILE
+================================================================================

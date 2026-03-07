@@ -1,0 +1,45 @@
+================================================================================
+                     SCHEDULR - STUDENT PROFILE
+================================================================================
+
+PERSONAL INFORMATION
+-------------------
+System ID      : 29
+Student ID     : N/A
+Full Name       : Unwind
+Email           : unwindmentalhealth@gmail.com
+Profile Created : 2026-03-03 09:24:33
+
+ACADEMIC INFORMATION
+-------------------
+Program/Major   : Computer Science
+Current Year    : Year 2
+Academic Year   : 2026
+Current GPA     : 3.2 / 4.0
+
+COMPLETED COURSES
+-------------------
+Total Completed : 18 courses
+
+1. CS 111 - Introduction to Computing & Information Systems
+2. CS 112 - Computer Programming for Engineering
+3. CS 212 - Computer Programming for Computer Science
+4. CS 221 - Discrete Theory and Structures
+5. CS 312 - Intermediate Computer Programming
+6. CS 331 - Computer Organization and Architecture
+7. ENGL 113 - Text and Meaning
+8. ENGL 215 - African Literature
+9. FRENC 111 - Introductory French 1
+10. FRENC 122 - Professional French 1
+11. FRENC 123 - Introductory French 2
+12. FRENC 214 - Professional French 2
+13. GEN 101 - Neo-Traditional African Dance Forms
+14. GEN 102 - African FolkTales: How Stories Shape Us
+15. SOAN 111 - Leadership Seminar 1
+16. SOAN 221 - Leadership Seminar 2
+17. SOAN 311 - Leadership Seminar 3
+18. SOAN 411 - Leadership Seminar 4
+
+================================================================================
+                     END OF PROFILE
+================================================================================

@@ -1,0 +1,273 @@
+{
+    "REG-D58CCD89D3": {
+        "registration_id": "REG-D58CCD89D3",
+        "student_id": "27",
+        "student_email": "abambirebawayenma@gmail.com",
+        "mycamu_email": "yenma.bawa@ashesi.edu.gh",
+        "timetable_options": {
+            "option1": {
+                "courses": [
+                    "CS 221",
+                    "SOAN 111"
+                ],
+                "sections": {
+                    "CS 221": 0,
+                    "SOAN 111": 1
+                }
+            },
+            "option2": {
+                "courses": [
+                    "GEN 201",
+                    "GEN 102"
+                ],
+                "sections": {
+                    "GEN 102": 1,
+                    "GEN 201": 0
+                }
+            },
+            "option3": {
+                "courses": [
+                    "CS 111",
+                    "CS 221"
+                ],
+                "sections": {
+                    "CS 111": 0,
+                    "CS 221": 1
+                }
+            }
+        },
+        "status": "pending",
+        "submitted_at": "2026-03-07T16:06:33+01:00",
+        "camu_job_id": "JOB-205562"
+    },
+    "REG-944F5EF6CD": {
+        "registration_id": "REG-944F5EF6CD",
+        "student_id": "27",
+        "student_email": "abambirebawayenma@gmail.com",
+        "mycamu_email": "yenma.bawa@ashesi.edu.gh",
+        "timetable_options": {
+            "option1": {
+                "courses": [
+                    "CS 111"
+                ],
+                "sections": {
+                    "CS 111": 0
+                }
+            },
+            "option2": {
+                "courses": [
+                    "CS 410"
+                ],
+                "sections": {
+                    "CS 410": 1
+                }
+            },
+            "option3": {
+                "courses": [
+                    "ENGL 001",
+                    "SOAN 220"
+                ],
+                "sections": {
+                    "ENGL 001": 0,
+                    "SOAN 220": 1
+                }
+            }
+        },
+        "status": "pending",
+        "submitted_at": "2026-03-07T16:16:15+01:00",
+        "camu_job_id": "JOB-326907"
+    },
+    "REG-23612D70E9": {
+        "registration_id": "REG-23612D70E9",
+        "student_id": "27",
+        "student_email": "abambirebawayenma@gmail.com",
+        "mycamu_email": "yenma.bawa@ashesi.edu.gh",
+        "timetable_options": {
+            "option1": {
+                "courses": [
+                    "CS 400"
+                ],
+                "sections": {
+                    "CS 400": 1
+                }
+            },
+            "option2": {
+                "courses": [
+                    "CS 400"
+                ],
+                "sections": {
+                    "CS 400": 0
+                }
+            },
+            "option3": {
+                "courses": [
+                    "ENGL 001"
+                ],
+                "sections": {
+                    "ENGL 001": 0
+                }
+            }
+        },
+        "status": "pending",
+        "submitted_at": "2026-03-07T16:26:58+01:00",
+        "camu_job_id": "JOB-148876"
+    },
+    "REG-51E6EE232E": {
+        "registration_id": "REG-51E6EE232E",
+        "student_id": "27",
+        "student_email": "abambirebawayenma@gmail.com",
+        "mycamu_email": "yenma.bawa@ashesi.edu.gh",
+        "timetable_options": {
+            "option1": {
+                "courses": [
+                    "CS 400",
+                    "CS 410"
+                ],
+                "sections": {
+                    "CS 400": 1,
+                    "CS 410": 0
+                }
+            },
+            "option2": {
+                "courses": [
+                    "GEN 203",
+                    "GEN 204"
+                ],
+                "sections": {
+                    "GEN 203": 1,
+                    "GEN 204": 0
+                }
+            },
+            "option3": {
+                "courses": [
+                    "ENGL 001",
+                    "FRENC 111"
+                ],
+                "sections": {
+                    "ENGL 001": 0,
+                    "FRENC 111": 1
+                }
+            }
+        },
+        "status": "pending",
+        "submitted_at": "2026-03-07T16:34:18+01:00",
+        "camu_job_id": "JOB-377027"
+    },
+    "REG-BAE1FD7601": {
+        "registration_id": "REG-BAE1FD7601",
+        "student_id": "27",
+        "student_email": "abambirebawayenma@gmail.com",
+        "mycamu_email": "yenma.bawa@ashesi.edu.gh",
+        "timetable_options": {
+            "option1": {
+                "courses": [
+                    "CS 221",
+                    "CS 400"
+                ],
+                "sections": {
+                    "CS 221": 0,
+                    "CS 400": 1
+                }
+            },
+            "option2": {
+                "courses": [
+                    "ENGL 001",
+                    "FRENC 111"
+                ],
+                "sections": {
+                    "ENGL 001": 0,
+                    "FRENC 111": 1
+                }
+            },
+            "option3": {
+                "courses": [
+                    "CS 410",
+                    "ENGL 001"
+                ],
+                "sections": {
+                    "CS 410": 0,
+                    "ENGL 001": 1
+                }
+            }
+        },
+        "status": "pending",
+        "submitted_at": "2026-03-07T16:38:45+01:00",
+        "camu_job_id": "JOB-455537"
+    },
+    "REG-CFB94150B5": {
+        "registration_id": "REG-CFB94150B5",
+        "student_id": "27",
+        "student_email": "abambirebawayenma@gmail.com",
+        "mycamu_email": "yenma.bawa@ashesi.edu.gh",
+        "timetable_options": {
+            "option1": {
+                "courses": [
+                    "CS 221"
+                ],
+                "sections": {
+                    "CS 221": 0
+                }
+            },
+            "option2": {
+                "courses": [
+                    "ENGL 001"
+                ],
+                "sections": {
+                    "ENGL 001": 1
+                }
+            },
+            "option3": {
+                "courses": [
+                    "CS 410"
+                ],
+                "sections": {
+                    "CS 410": 0
+                }
+            }
+        },
+        "status": "pending",
+        "submitted_at": "2026-03-07T16:45:38+01:00",
+        "camu_job_id": "JOB-371518"
+    },
+    "REG-B29EA202BD": {
+        "registration_id": "REG-B29EA202BD",
+        "student_id": "27",
+        "student_email": "abambirebawayenma@gmail.com",
+        "mycamu_email": "yenma.bawa@ashesi.edu.gh",
+        "timetable_options": {
+            "option1": {
+                "courses": [
+                    "CS 400",
+                    "FYE 001"
+                ],
+                "sections": {
+                    "CS 400": 0,
+                    "FYE 001": 1
+                }
+            },
+            "option2": {
+                "courses": [
+                    "FRENC 111",
+                    "GEN 102"
+                ],
+                "sections": {
+                    "GEN 102": 1,
+                    "FRENC 111": 0
+                }
+            },
+            "option3": {
+                "courses": [
+                    "CS 400",
+                    "FRENC 111"
+                ],
+                "sections": {
+                    "CS 400": 1,
+                    "FRENC 111": 0
+                }
+            }
+        },
+        "status": "pending",
+        "submitted_at": "2026-03-07T17:00:48+01:00",
+        "camu_job_id": "JOB-793117"
+    }
+}
