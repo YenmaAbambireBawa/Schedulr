@@ -20,7 +20,7 @@ define('MAIL_FROM_NAME',  'Schedulr');              // Sender display name
 define('MAIL_ENCRYPTION', 'tls');                   // 'tls' or 'ssl'
 
 // Your app's base URL — used to build the verification link in the email
-define('APP_BASE_URL', 'http://localhost/schedulr');
+define('APP_BASE_URL', 'https://schedulr-production.up.railway.app/');
 
 // ─────────────────────────────────────────────────────────────────────────────
 
