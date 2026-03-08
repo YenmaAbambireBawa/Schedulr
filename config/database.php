@@ -5,12 +5,20 @@
  */
 
 class Database {
-    private $host = 'localhost';
-    private $db_name = 'schedulr_db';
-    private $username = 'root';
-    private $password = '';
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
+    private $port;
     private $conn;
-
+    
+    public function __construct() {
+        $this->host     = getenv('MYSQLHOST')     ?: 'localhost';
+        $this->db_name  = getenv('MYSQLDATABASE') ?: 'schedulr_db';
+        $this->username = getenv('MYSQLUSER')     ?: 'root';
+        $this->password = getenv('MYSQLPASSWORD') ?: '';
+        $this->port     = getenv('MYSQLPORT')     ?: 3306;
+    }
     /**
      * Get database connection
      * @return PDO|null
