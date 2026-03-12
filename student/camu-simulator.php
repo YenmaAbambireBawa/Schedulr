@@ -16,13 +16,23 @@ $regId = $_GET['id'] ?? null;
 
 $registration = null;
 if ($regId) {
-    $savePath = __DIR__ . '/../user_data/registrations.json';
-    if (file_exists($savePath)) {
-        $all = json_decode(file_get_contents($savePath), true) ?? [];
-        $registration = $all[$regId] ?? null;
+    require_once __DIR__ . '/../config/database.php';
+    $database = new Database();
+    $db = $database->getConnection();
+    if ($db) {
+        $stmt = $db->prepare("SELECT * FROM course_registrations WHERE registration_id = ?");
+        $stmt->execute([$regId]);
+        $row = $stmt->fetch();
+        if ($row) {
+            $registration = [
+                'student_email'     => $row['student_email'],
+                'mycamu_email'      => $row['mycamu_email'],
+                'camu_job_id'       => $row['camu_job_id'],
+                'timetable_options' => json_decode($row['timetable_options'], true),
+            ];
+        }
     }
 }
-
 $options      = $registration['timetable_options'] ?? [];
 $studentEmail = $registration['student_email']     ?? 'student@example.com';
 $mycamuEmail  = $registration['mycamu_email']      ?? 'student@mycamu.edu';
