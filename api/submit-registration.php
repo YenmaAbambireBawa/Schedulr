@@ -82,38 +82,37 @@ if (DUMMY_CAMU) {
     $camuJobId      = 'JOB-' . rand(100000, 999999);
 
     // Save to MySQL
-    try {
-        $database = new Database();
-        $db = $database->getConnection();
+try {
+    $database = new Database();
+    $db = $database->getConnection();
 
-        if ($db) {
-            $stmt = $db->prepare("
-                INSERT INTO course_registrations
-                    (registration_id, student_id, student_email, mycamu_email,
-                     timetable_options, registration_status, submitted_at, camu_job_id)
-                VALUES (?, ?, ?, ?, ?, 'pending', NOW(), ?)
-                ON DUPLICATE KEY UPDATE submitted_at = NOW()
-            ");
-            $stmt->execute([
-                $registrationId,
-                $data['student_id'],
-                $data['student_email'],
-                $data['mycamu_email'],
-                json_encode($data['timetable_options']),
-                $camuJobId,
-            ]);
-        }
-    } catch (Exception $e) {
-        error_log("Registration DB insert failed: " . $e->getMessage());
-        // Don't crash — still redirect to simulator
+    if ($db) {
+        $stmt = $db->prepare("
+            INSERT INTO course_registrations
+                (student_id, student_email, mycamu_email, mycamu_password_encrypted,
+                 timetable_options, registration_status, submitted_at)
+            VALUES (?, ?, ?, '', ?, 'pending', NOW())
+        ");
+        $stmt->execute([
+            $data['student_id'],
+            $data['student_email'],
+            $data['mycamu_email'],
+            json_encode($data['timetable_options']),
+        ]);
+        
+        // Get the auto-incremented ID
+        $dbInsertId = $db->lastInsertId();
     }
+} catch (\Exception $e) {
+    error_log("Registration DB insert failed: " . $e->getMessage());
+}
 
     respond(true, 'Registration submitted. Redirecting to myCAMU simulator...', [
-        'registration_id' => $registrationId,
-        'email_sent'      => false,
-        'dummy_mode'      => true,
-        'simulator_url'   => '/student/camu-simulator.php?id=' . $registrationId,
-    ]);
+    'registration_id' => $dbInsertId ?? $registrationId,
+    'email_sent'      => false,
+    'dummy_mode'      => true,
+    'simulator_url'   => '/student/camu-simulator.php?id=' . ($dbInsertId ?? $registrationId),
+]);
 }
 
 // ── PRODUCTION MODE ───────────────────────────────────────────
