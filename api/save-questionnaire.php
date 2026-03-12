@@ -157,7 +157,7 @@ try {
         'success' => true,
         'message' => 'Profile saved successfully!',
         'data' => [
-            'redirect_url' => '/schedulr/student/dashboard.php',
+            'redirect_url' => '/student/dashboard.php',
             'filename' => $filename,
             'filepath' => $filepath,
             'bytes_written' => $result
