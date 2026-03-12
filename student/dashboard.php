@@ -14,23 +14,13 @@ Auth::requireStudent();
 
 // Get current user data
 $user = Auth::user();
-
 // Database connection
-try {
-    $db = new PDO(
-        "mysql:host=localhost;dbname=schedulr_db;charset=utf8mb4",
-        "root",
-        "",
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false
-        ]
-    );
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+require_once __DIR__ . '/../config/database.php';
+$database = new Database();
+$db = $database->getConnection();
+if (!$db) {
+    die("Database connection failed");
 }
-
 // Function to read student data from saved file
 function getStudentDataFromFile($userId, $userName) {
     $userDataDir = __DIR__ . '/../user_data';
@@ -1739,7 +1729,7 @@ $course_catalog = buildCourseCatalog($db);
             };
             
             try {
-                const response = await fetch('../api/submit-registration.php', {
+                const response = await fetch('/api/submit-registration.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
