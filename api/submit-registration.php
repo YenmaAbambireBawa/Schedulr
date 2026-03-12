@@ -9,6 +9,8 @@
  */
 ob_start();
 
+define('DUMMY_CAMU', true);
+
 header('Content-Type: application/json');
 require_once __DIR__ . '/../middleware/Auth.php';
 
