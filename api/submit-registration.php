@@ -114,7 +114,7 @@ try {
             'email_sent'      => false,
             'dummy_mode'      => true,
             // Front-end will redirect here after showing the success message
-            'simulator_url'   => '../student/camu-simulator.php?id=' . $registrationId,
+            'simulator_url'   => '/student/camu-simulator.php?id=' . $registrationId,
         ]);
         exit;
     }
@@ -169,7 +169,7 @@ try {
 
             $protocol        = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
             $baseUrl         = $protocol . '://' . $_SERVER['HTTP_HOST'];
-            $verificationLink = $baseUrl . '/schedulr/pages/verify-registration.php?token=' . $token . '&id=' . $registrationId;
+            $verificationLink = $baseUrl . '/pages/verify-registration.php?token=' . $token . '&id=' . $registrationId;
 
             $mail->setFrom('noreply@schedulr.edu', 'Schedulr');
             $mail->addAddress($email);
