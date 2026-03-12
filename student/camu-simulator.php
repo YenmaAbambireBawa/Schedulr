@@ -38,6 +38,14 @@ function makeMailer(): PHPMailer {
     $mail->Password   = MAIL_PASSWORD;
     $mail->SMTPSecure = MAIL_ENCRYPTION;
     $mail->Port       = MAIL_PORT;
+    $mail->SMTPOptions = [
+        'ssl' => [
+            'verify_peer'       => false,
+            'verify_peer_name'  => false,
+            'allow_self_signed' => true,
+        ]
+    ];
+    $mail->Timeout    = 10;
     $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
     $mail->isHTML(true);
     return $mail;
@@ -191,6 +199,8 @@ $winningOption = count($opt1courses) > 0 ? 1 : 2;
 
 // ── Fire all emails if we have valid data ─────────────────────────────────────
 if ($studentEmail && $regId && $registration) {
+    set_time_limit(25);
+    try {
     sendStepEmail($studentEmail, 1, 'Connect to myCAMU',
         "The bot successfully established a secure connection to <strong>mycamu.edu</strong> using TLS 1.3. The login page was loaded and is ready for credential entry.",
         $regId, $camuJobId);
@@ -212,8 +222,10 @@ if ($studentEmail && $regId && $registration) {
         $regId, $camuJobId);
 
     sendFinalConfirmation($studentEmail, $regId, $camuJobId, $options, $winningOption);
+    } catch (Exception $e) {
+        error_log("Email block failed: " . $e->getMessage());
+    }
 }
-
 // ── Build flat list of courses per option for JS ──────────────────────────────
 $optionsJson = json_encode($options);
 ?>
