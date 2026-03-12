@@ -3,7 +3,7 @@
  * Email Configuration
  * Schedulr — config/email.php
  *
- * Uses PHPMailer via Composer.
+ * Uses PHPMailer via Composer.flo
  * Install PHPMailer first:
  *   cd C:/xampp/htdocs/schedulr
  *   composer require phpmailer/phpmailer
