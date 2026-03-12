@@ -36,13 +36,13 @@ try {
     session_destroy();
 
     //  Redirect to homepage
-    header("Location: /schedulr/index.html");
+    header("Location: /index.html");
     exit;
 
 } catch (Exception $e) {
     error_log("Logout error: " . $e->getMessage());
 
     // Fallback redirect if something breaks
-    header("Location: /schedulr/index.html");
+    header("Location: /index.html");
     exit;
 }
