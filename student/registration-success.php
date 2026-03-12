@@ -131,7 +131,7 @@ if (!$registration) {
             </ol>
         </div>
 
-        <a href="/schedulr/student/dashboard.php" class="btn">Return to Dashboard</a>
+        <a href="/student/dashboard.php" class="btn">Return to Dashboard</a>
     </div>
 </body>
 </html>
