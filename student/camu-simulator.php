@@ -12,28 +12,8 @@ if (file_exists(__DIR__ . '/../config/session.php')) {
     session_start();
 }
 
-// Safe email config — fallback to hardcoded if file missing
-if (file_exists(__DIR__ . '/../config/email.php')) {
-    require_once __DIR__ . '/../config/email.php';
-} else {
-    define('MAIL_HOST',      'smtp.gmail.com');
-    define('MAIL_USERNAME',  'schedulr.au@gmail.com');
-    define('MAIL_PASSWORD',  'uwvi toph auiz wfvs');
-    define('MAIL_ENCRYPTION','tls');
-    define('MAIL_PORT',      587);
-    define('MAIL_FROM',      'schedulr.au@gmail.com');
-    define('MAIL_FROM_NAME', 'Schedulr');
-}
-
-// Safe vendor autoload
-$vendorPath = __DIR__ . '/../vendor/autoload.php';
-$phpMailerAvailable = file_exists($vendorPath);
-if ($phpMailerAvailable) {
-    require_once $vendorPath;
-}
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+// Emails sent async via /api/send-registration-emails.php (called by JS)
+// No SMTP code here — avoids Railway timeout issues.
 
 // Require database
 require_once __DIR__ . '/../config/database.php';
@@ -68,211 +48,6 @@ $options      = $registration['timetable_options'] ?? [];
 $studentEmail = $registration['student_email']     ?? 'student@example.com';
 $mycamuEmail  = $registration['mycamu_email']      ?? 'student@mycamu.edu';
 $camuJobId    = $registration['camu_job_id']       ?? 'JOB-000000';
-
-// ── PHPMailer helper ──────────────────────────────────────────
-function makeMailer(): PHPMailer {
-    $mail = new PHPMailer(true);
-    $mail->isSMTP();
-    $mail->Host        = MAIL_HOST;
-    $mail->SMTPAuth    = true;
-    $mail->Username    = MAIL_USERNAME;
-    $mail->Password    = MAIL_PASSWORD;
-    $mail->SMTPSecure  = MAIL_ENCRYPTION;
-    $mail->Port        = MAIL_PORT;
-    $mail->SMTPOptions = [
-        'ssl' => [
-            'verify_peer'       => false,
-            'verify_peer_name'  => false,
-            'allow_self_signed' => true,
-        ]
-    ];
-    $mail->Timeout  = 10;
-    $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
-    $mail->isHTML(true);
-    return $mail;
-}
-
-// ── Shared email wrapper ──────────────────────────────────────
-function emailWrap(string $accentColor, string $iconChar, string $title, string $body, string $regId, string $jobId): string {
-    return "
-    <div style='font-family:\"Outfit\",\"Segoe UI\",sans-serif;max-width:540px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e5e7eb;box-shadow:0 4px 24px rgba(0,0,0,0.08)'>
-      <div style='background:linear-gradient(135deg,{$accentColor});padding:30px 36px;display:flex;align-items:center;gap:16px'>
-        <div style='width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0'>{$iconChar}</div>
-        <div>
-          <div style='font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px'>Schedulr · Auto-Registration</div>
-          <div style='font-size:20px;font-weight:800;color:#ffffff'>{$title}</div>
-        </div>
-      </div>
-      <div style='padding:28px 36px'>
-        {$body}
-        <div style='margin-top:28px;padding-top:18px;border-top:1px solid #f3f4f6;display:flex;justify-content:space-between;align-items:center'>
-          <div style='font-family:monospace;font-size:11px;color:#9ca3af'>{$regId}</div>
-          <div style='font-family:monospace;font-size:11px;color:#9ca3af'>{$jobId}</div>
-        </div>
-      </div>
-    </div>";
-}
-
-// ── Step email ────────────────────────────────────────────────
-function sendStepEmail(string $toEmail, int $stepNum, string $stepName, string $detail, string $regId, string $jobId): void {
-    global $phpMailerAvailable;
-    if (!$phpMailerAvailable) return;
-
-    $colors = [
-        1 => '#8a881e,#1d4ed8',
-        2 => '#1e8a54,#1d4ed8',
-        3 => '#561eaf,#2563eb',
-        4 => '#e414a6,#b45309',
-        5 => '#651616,#15803d',
-    ];
-    $icons = [1 => '🔌', 2 => '🔐', 3 => '🧭', 4 => '📋', 5 => '✅'];
-
-    $color = $colors[$stepNum] ?? '#374151,#111827';
-    $icon  = $icons[$stepNum]  ?? '⚙️';
-
-    $bars = implode('', array_map(fn($n) =>
-        "<div style='flex:1;height:6px;border-radius:3px;background:" . ($n <= $stepNum ? '#2563eb' : '#dbeafe') . "'></div>",
-        range(1, 5)
-    ));
-
-    $bodyHtml = "
-      <p style='font-size:15px;color:#374151;margin:0 0 18px'>
-        The Schedulr bot has completed <strong>Step {$stepNum}</strong> of the myCAMU auto-registration pipeline.
-      </p>
-      <div style='background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;margin-bottom:18px'>
-        <div style='font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px'>Step Detail</div>
-        <div style='font-size:14px;color:#1e293b;line-height:1.6'>{$detail}</div>
-      </div>
-      <div style='background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px'>
-        <div style='font-size:12px;color:#1e40af;font-weight:600'>Pipeline Progress — Step {$stepNum} of 5</div>
-        <div style='margin-top:10px;display:flex;gap:6px'>{$bars}</div>
-      </div>";
-
-    $html = emailWrap($color, $icon, "Step {$stepNum}: {$stepName}", $bodyHtml, $regId, $jobId);
-
-    try {
-        $mail = makeMailer();
-        $mail->addAddress($toEmail);
-        $mail->Subject = "Schedulr · Step {$stepNum}/5 — {$stepName} [{$regId}]";
-        $mail->Body    = $html;
-        $mail->AltBody = "Step {$stepNum}/5 — {$stepName} completed. Ref: {$regId} / {$jobId}";
-        $mail->send();
-    } catch (Exception $e) {
-        error_log("Schedulr step email error (step {$stepNum}): " . $e->getMessage());
-    }
-}
-
-// ── Final confirmation email ──────────────────────────────────
-function sendFinalConfirmation(string $toEmail, string $regId, string $jobId, array $options, int $winningOption): void {
-    global $phpMailerAvailable;
-    if (!$phpMailerAvailable) return;
-
-    $optionRows = '';
-    foreach ($options as $key => $opt) {
-        $num     = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
-        $courses = implode(', ', $opt['courses'] ?? []);
-        $isWin   = ($num === $winningOption);
-        $rowBg   = $isWin ? '#f0fdf4' : '#f9fafb';
-        $codeColor = $isWin ? '#166534' : '#6b7280';
-        $label   = match($num) {
-            1 => 'Option 1 — Most Preferred',
-            2 => 'Option 2 — Second Choice',
-            3 => 'Option 3 — Third Choice',
-            default => "Option {$num}"
-        };
-        $badge = $isWin
-            ? "<span style='background:#dcfce7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:monospace'>REGISTERED ✓</span>"
-            : "<span style='background:#f3f4f6;color:#9ca3af;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:monospace'>Not needed</span>";
-
-        $optionRows .= "
-          <tr style='background:{$rowBg}'>
-            <td style='padding:10px 14px;font-size:13px;color:#374151;font-weight:600;border-bottom:1px solid #f1f5f9'>{$label}</td>
-            <td style='padding:10px 14px;font-family:monospace;font-size:12px;color:{$codeColor};border-bottom:1px solid #f1f5f9'>{$courses}</td>
-            <td style='padding:10px 14px;border-bottom:1px solid #f1f5f9'>{$badge}</td>
-          </tr>";
-    }
-
-    $stepsHtml = implode('', array_map(fn($n, $label) =>
-        "<div style='display:flex;align-items:center;gap:10px;margin-bottom:7px'>
-          <div style='width:20px;height:20px;background:#166534;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:700;flex-shrink:0'>✓</div>
-          <span style='font-size:13px;color:#166534'>{$label}</span>
-        </div>",
-        range(1, 5),
-        ['Connect to myCAMU', 'Authenticate', 'Navigate to Registration', 'Submit Timetable Options', 'Confirmation Received']
-    ));
-
-    $bodyHtml = "
-      <p style='font-size:15px;color:#374151;margin:0 0 20px;line-height:1.6'>
-        🎉 Your course registration has been <strong>successfully completed</strong> by the Schedulr bot.
-      </p>
-      <div style='border-radius:10px;overflow:hidden;border:1px solid #e2e8f0;margin-bottom:20px'>
-        <div style='background:#f1f5f9;padding:10px 14px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.6px'>Registration Summary</div>
-        <table style='width:100%;border-collapse:collapse'>
-          <thead>
-            <tr style='background:#f8fafc'>
-              <th style='padding:8px 14px;text-align:left;font-size:11px;color:#9ca3af;font-weight:600;text-transform:uppercase'>Option</th>
-              <th style='padding:8px 14px;text-align:left;font-size:11px;color:#9ca3af;font-weight:600;text-transform:uppercase'>Courses</th>
-              <th style='padding:8px 14px;text-align:left;font-size:11px;color:#9ca3af;font-weight:600;text-transform:uppercase'>Status</th>
-            </tr>
-          </thead>
-          <tbody>{$optionRows}</tbody>
-        </table>
-      </div>
-      <div style='background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;margin-bottom:20px'>
-        <div style='font-size:12px;font-weight:700;color:#166534;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px'>All 5 Steps Completed</div>
-        {$stepsHtml}
-      </div>
-      <p style='font-size:13px;color:#6b7280;line-height:1.6;margin:0'>
-        Please log in to <strong>myCAMU</strong> to verify your enrolled courses.
-      </p>";
-
-    $html = emailWrap('#166534,#15803d', '🎓', 'Registration Confirmed!', $bodyHtml, $regId, $jobId);
-
-    try {
-        $mail = makeMailer();
-        $mail->addAddress($toEmail);
-        $mail->Subject = "✅ Registration Confirmed — {$regId}";
-        $mail->Body    = $html;
-        $mail->AltBody = "Your myCAMU registration was confirmed. Ref: {$regId} / {$jobId}";
-        $mail->send();
-    } catch (Exception $e) {
-        error_log("Schedulr final confirmation email error: " . $e->getMessage());
-    }
-}
-
-// ── Determine winning option ──────────────────────────────────
-$opt1courses    = $options['option1']['courses'] ?? [];
-$winningOption  = count($opt1courses) > 0 ? 1 : 2;
-
-// ── Fire emails if valid registration ────────────────────────
-if ($studentEmail && $regId && $registration) {
-    set_time_limit(30);
-    try {
-        sendStepEmail($studentEmail, 1, 'Connect to myCAMU',
-            "The bot successfully established a secure connection to <strong>mycamu.edu</strong> using TLS 1.3. The login page was loaded and is ready for credential entry.",
-            $regId, $camuJobId);
-
-        sendStepEmail($studentEmail, 2, 'Authenticate',
-            "Credentials were entered and submitted to the myCAMU login form. The server responded with an HTTP 302 redirect to the student dashboard, and a session cookie was acquired successfully.",
-            $regId, $camuJobId);
-
-        sendStepEmail($studentEmail, 3, 'Navigate to Registration',
-            "The bot navigated from the dashboard to the <strong>Course Registration</strong> portal. The registration form loaded successfully.",
-            $regId, $camuJobId);
-
-        sendStepEmail($studentEmail, 4, 'Submit Timetable Options',
-            "The bot attempted your timetable options in priority order. Option <strong>{$winningOption}</strong> was accepted and all courses were registered without conflicts.",
-            $regId, $camuJobId);
-
-        sendStepEmail($studentEmail, 5, 'Confirmation Received',
-            "myCAMU returned a registration confirmation page. All courses are now officially enrolled. The bot session has been closed.",
-            $regId, $camuJobId);
-
-        sendFinalConfirmation($studentEmail, $regId, $camuJobId, $options, $winningOption);
-    } catch (Exception $e) {
-        error_log("Email block failed: " . $e->getMessage());
-    }
-}
 
 $optionsJson = json_encode($options);
 ?>
@@ -849,7 +624,31 @@ async function runSimulation() {
   document.getElementById('backBtn').classList.add('show');
 }
 
-window.addEventListener('load', () => setTimeout(runSimulation, 800));
+// ── Fire emails asynchronously in background ──────────────────
+async function sendEmailsAsync() {
+  try {
+    await fetch('/api/send-registration-emails.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        reg_id:         REG_ID,
+        student_email:  STUDENT_EMAIL,
+        mycamu_email:   CAMU_EMAIL,
+        camu_job_id:    <?= json_encode($camuJobId) ?>,
+        options:        OPTIONS,
+        winning_option: (OPTIONS.option1?.courses?.length > 0) ? 1 : 2
+      })
+    });
+  } catch (e) {
+    console.warn('Email dispatch failed (non-critical):', e);
+  }
+}
+
+window.addEventListener('load', () => {
+  setTimeout(runSimulation, 800);
+  setTimeout(sendEmailsAsync, 2000); // slight delay so page renders first
+});
 </script>
 <?php endif; ?>
 </body>
