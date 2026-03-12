@@ -98,14 +98,27 @@ try {
         ];
 
         // Persist to JSON "database"
-        $savePath = __DIR__ . '/../user_data/registrations.json';
-        $existing = [];
-        if (file_exists($savePath)) {
-            $existing = json_decode(file_get_contents($savePath), true) ?? [];
-        }
-        $existing[$registrationId] = $record;
-        @file_put_contents($savePath, json_encode($existing, JSON_PRETTY_PRINT));
-
+        // Persist to MySQL
+require_once __DIR__ . '/../config/database.php';
+$database = new Database();
+$db = $database->getConnection();
+if ($db) {
+    $stmt = $db->prepare("
+        INSERT INTO course_registrations 
+        (registration_id, student_id, student_email, mycamu_email, 
+         timetable_options, registration_status, submitted_at, camu_job_id)
+        VALUES (?, ?, ?, ?, ?, 'pending', NOW(), ?)
+        ON DUPLICATE KEY UPDATE submitted_at = NOW()
+    ");
+    $stmt->execute([
+        $registrationId,
+        $data['student_id'],
+        $data['student_email'],
+        $data['mycamu_email'],
+        json_encode($data['timetable_options']),
+        $camuJobId,
+    ]);
+}
         ob_end_clean();
         echo json_encode([
             'success'         => true,
