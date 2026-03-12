@@ -1734,6 +1734,7 @@ $course_catalog = buildCourseCatalog($db);
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    credentials: 'same-origin',
                     body: JSON.stringify(registrationData)
                 });
                 
