@@ -459,7 +459,7 @@ try {
 
     <div class="container">
         <div class="header">
-            <a href="/schedulr/index.html" class="logo-container">
+            <a href="/index.html" class="logo-container">
                 <div class="logo">S</div>
                 <div class="brand-name">Schedulr</div>
             </a>
