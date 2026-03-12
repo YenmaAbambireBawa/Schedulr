@@ -111,7 +111,7 @@ try {
             'role' => $user->role,
             'student_id' => $user->student_id
         ],
-        'redirect_url' => $user->role === 'admin' ? '/schedulr/admin/dashboard.php' : '/schedulr/student/dashboard.php',
+        'redirect_url' => $user->role === 'admin' ? '/admin/dashboard.php' : '/student/dashboard.php',
         'session_id' => session_id()
     ];
 
