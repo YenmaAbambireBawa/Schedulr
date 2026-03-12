@@ -24,7 +24,7 @@ use PHPMailer\PHPMailer\Exception;
 // Set to true to use the visual myCAMU simulator.
 // Set to false to use real DB + SMTP.
 // ─────────────────────────────────────────────────────────────
-define('DUMMY_CAMU', true);
+define('', true);
 
 if (!getenv('ENCRYPTION_KEY')) {
     putenv('ENCRYPTION_KEY=' . bin2hex(random_bytes(32)));
@@ -66,6 +66,28 @@ try {
     // ─────────────────────────────────────────────────────────
     // DUMMY MODE: skip DB + SMTP, save to JSON, return sim URL
     // ─────────────────────────────────────────────────────────
+    if ($db) {
+    try {
+        $stmt = $db->prepare("
+            INSERT INTO course_registrations 
+            (registration_id, student_id, student_email, mycamu_email, 
+             timetable_options, registration_status, submitted_at, camu_job_id)
+            VALUES (?, ?, ?, ?, ?, 'pending', NOW(), ?)
+            ON DUPLICATE KEY UPDATE submitted_at = NOW()
+        ");
+        $stmt->execute([
+            $registrationId,
+            $data['student_id'],
+            $data['student_email'],
+            $data['mycamu_email'],
+            json_encode($data['timetable_options']),
+            $camuJobId,
+        ]);
+    } catch (PDOException $e) {
+        error_log("DB insert failed: " . $e->getMessage());
+        // Don't crash — still return success so simulator works
+    }
+}
     if (DUMMY_CAMU) {
 
         // Simulate a quick credential check
