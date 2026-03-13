@@ -1462,29 +1462,41 @@ $course_catalog = buildCourseCatalog($db);
         const courseCatalog = <?php echo json_encode($course_catalog); ?>;
         const completedCourses = <?php echo json_encode(array_column($student_data['completed_courses'], 'code')); ?>;
 
-        // State management - SEPARATE for each option
-        let selectedCourses = {
-            option1: [],
-            option2: [],
-            option3: []
-        };
-        let selectedSections = {
-            option1: {},
-            option2: {},
-            option3: {}
-        };
-        let prerequisitesPassed = {
-            option1: false,
-            option2: false,
-            option3: false
-        };
+        // State management
+        let selectedCourses = { option1: [], option2: [], option3: [] };
+        let selectedSections = { option1: {}, option2: {}, option3: {} };
+        let prerequisitesPassed = { option1: false, option2: false, option3: false };
         let currentOption = 1;
 
-        // Hamburger menu
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const sidebar = document.querySelector('.sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        // ── DOM references (declared first so nothing blows up below) ──
+        const sidebarLinks     = document.querySelectorAll('.sidebar-link');
+        const sections         = document.querySelectorAll('.content-section');
+        const timetableTabs    = document.querySelectorAll('.timetable-tab');
+        const timetableContents = document.querySelectorAll('.timetable-content');
+        const hamburgerBtn     = document.getElementById('hamburgerBtn');
+        const sidebar          = document.querySelector('.sidebar');
+        const sidebarOverlay   = document.getElementById('sidebarOverlay');
+        const optionSelect     = document.getElementById('optionSelect');
+        const toggleButton     = document.getElementById('toggleCGPA');
+        const cgpaValue        = document.getElementById('cgpaValue');
+        const eyeIcon          = document.getElementById('eyeIcon');
 
+        // ── Sidebar navigation ──
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-section');
+                sections.forEach(sec => sec.classList.remove('active'));
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+                link.classList.add('active');
+                // Close mobile sidebar
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+            });
+        });
+
+        // ── Hamburger menu ──
         hamburgerBtn.addEventListener('click', () => {
             sidebar.classList.toggle('open');
             sidebarOverlay.classList.toggle('active');
@@ -1494,82 +1506,31 @@ $course_catalog = buildCourseCatalog($db);
             sidebarOverlay.classList.remove('active');
         });
 
-        // Close sidebar when nav item clicked (mobile)
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                sidebarOverlay.classList.remove('active');
-            });
-        });
-
-        // Option select (mobile) synced with tabs
-        const optionSelect = document.getElementById('optionSelect');
-        optionSelect.addEventListener('change', () => {
-            const option = optionSelect.value;
-            currentOption = parseInt(option);
+        // ── Timetable tab switching ──
+        function switchOption(optionNum) {
+            currentOption = parseInt(optionNum);
             timetableTabs.forEach(t => t.classList.remove('active'));
             timetableContents.forEach(c => c.classList.remove('active'));
-            const matchingTab = document.querySelector(`.timetable-tab[data-option="${option}"]`);
+            const matchingTab = document.querySelector(`.timetable-tab[data-option="${optionNum}"]`);
             if (matchingTab) matchingTab.classList.add('active');
-            document.getElementById(`timetableOption${option}`).classList.add('active');
-        });
-
-        // Sync tab clicks to select
-        timetableTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                optionSelect.value = tab.getAttribute('data-option');
-            });
-        });
-
-        // Sidebar navigation
-        const sidebarLinks = document.querySelectorAll('.sidebar-link');
-        const sections = document.querySelectorAll('.content-section');
-
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = link.getAttribute('data-section');
-
-                sections.forEach(sec => sec.classList.remove('active'));
-                sidebarLinks.forEach(l => l.classList.remove('active'));
-
-                document.getElementById(target).classList.add('active');
-                link.classList.add('active');
-            });
-        });
-
-        // Timetable tab switching
-        const timetableTabs = document.querySelectorAll('.timetable-tab');
-        const timetableContents = document.querySelectorAll('.timetable-content');
+            document.getElementById(`timetableOption${optionNum}`).classList.add('active');
+            optionSelect.value = String(optionNum);
+        }
 
         timetableTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const option = tab.getAttribute('data-option');
-                currentOption = parseInt(option);
-
-                timetableTabs.forEach(t => t.classList.remove('active'));
-                timetableContents.forEach(c => c.classList.remove('active'));
-
-                tab.classList.add('active');
-                document.getElementById(`timetableOption${option}`).classList.add('active');
-            });
+            tab.addEventListener('click', () => switchOption(tab.getAttribute('data-option')));
         });
 
-        // CGPA visibility toggle
-        const toggleButton = document.getElementById('toggleCGPA');
-        const cgpaValue = document.getElementById('cgpaValue');
-        const eyeIcon = document.getElementById('eyeIcon');
+        optionSelect.addEventListener('change', () => switchOption(optionSelect.value));
+
+        // ── CGPA visibility toggle ──
         let isHidden = false;
-
-        toggleButton.addEventListener('click', function() {
+        toggleButton.addEventListener('click', function () {
             isHidden = !isHidden;
-            cgpaValue.classList.toggle('hidden');
-            
-            if (isHidden) {
-                eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
-            } else {
-                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-            }
+            cgpaValue.classList.toggle('hidden', isHidden);
+            eyeIcon.innerHTML = isHidden
+                ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>'
+                : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
         });
 
         // Display course catalog
