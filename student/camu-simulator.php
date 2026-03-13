@@ -216,6 +216,45 @@ $optionsJson = json_encode($options);
   /* No registration state */
   .no-reg { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:16px; padding:40px; text-align:center; color:var(--muted); }
   .no-reg h2 { color:var(--text); font-size:20px; }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .topbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+    .topbar h1 { font-size: 15px; }
+    .job-badge { font-size: 10px; padding: 3px 8px; }
+
+    .layout { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+
+    .browser-panel { border-right: none; border-bottom: 1px solid var(--border); min-height: 420px; }
+    .browser-content { min-height: 360px; }
+
+    .camu-login-box { padding: 24px 20px; max-width: 100%; }
+
+    .camu-portal-nav { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .camu-portal-nav::-webkit-scrollbar { display: none; }
+    .camu-nav-item { font-size: 11px; padding: 10px 12px; }
+
+    .log-panel { min-height: 300px; max-height: 380px; }
+    .log-scroll { max-height: 150px; }
+
+    .result-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .result-cards > .track-label { grid-column: 1 / -1; }
+    .result-card { margin-bottom: 0; }
+
+    .status-track { padding: 12px 16px; }
+    .track-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+    .confirmed-icon { width: 60px; height: 60px; font-size: 28px; }
+    .confirmed-title { font-size: 18px; }
+
+    #screen-login { padding: 20px; }
+  }
+
+  @media (max-width: 480px) {
+    .result-cards { grid-template-columns: 1fr; }
+    .track-steps { grid-template-columns: 1fr; }
+    .topbar-left gap { gap: 8px; }
+  }
 </style>
 </head>
 <body>
