@@ -939,19 +939,172 @@ $course_catalog = buildCourseCatalog($db);
             margin-bottom: 5px;
             font-weight: bold;
         }
+
+        /* Mobile hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #1a1a1a;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Timetable option select (mobile-friendly) */
+        .option-select-wrapper {
+            display: none;
+            margin-bottom: 20px;
+        }
+        .option-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            background: white;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+        .option-select:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        /* Sidebar overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 99;
+        }
+        .sidebar-overlay.active { display: block; }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 14px 20px;
+            }
+            .logo-text { font-size: 20px; }
+            .user-name { display: none; }
+            .hamburger { display: flex; }
+
+            .dashboard-container { flex-direction: column; }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                height: 100%;
+                z-index: 100;
+                transition: left 0.3s ease;
+                box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+                padding-top: 70px;
+            }
+            .sidebar.open { left: 0; }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .student-info-card {
+                padding: 24px 20px;
+                border-radius: 16px;
+            }
+            .student-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            .student-name { font-size: 24px; }
+            .cgpa-container { width: 100%; justify-content: space-between; }
+
+            .student-details {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .registration-workflow {
+                padding: 20px 16px;
+                border-radius: 14px;
+            }
+
+            /* Show select, hide tabs on mobile */
+            .timetable-tabs { display: none; }
+            .option-select-wrapper { display: block; }
+
+            .section-options {
+                grid-template-columns: 1fr;
+            }
+
+            .step-header { gap: 10px; }
+            .step-title { font-size: 17px; }
+
+            .selected-course-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .summary-header {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .summary-header span[style*="float"] {
+                float: none !important;
+            }
+
+            .mycamu-credentials-section {
+                padding: 16px;
+            }
+
+            .section-title { font-size: 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .student-details { grid-template-columns: 1fr; }
+            .btn { padding: 10px 16px; font-size: 13px; }
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="logo">
+        <div style="display:flex;align-items:center;gap:14px;">
+            <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">
+                <span></span><span></span><span></span>
+            </button>
+            <a href="/" class="logo">
             <div class="logo-icon">S</div>
             <div class="logo-text">Schedulr</div>
         </a>
+        </div>
         <div class="user-menu">
             <span class="user-name"><?php echo htmlspecialchars($user['email']); ?></span>
             <a href="../api/logout.php" class="btn btn-primary">Logout</a>
         </div>
     </nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="dashboard-container">
         <!-- Sidebar -->
@@ -1060,6 +1213,15 @@ $course_catalog = buildCourseCatalog($db);
                 </p>
                 
                 <div class="registration-workflow">
+                    <!-- Mobile Option Select -->
+                    <div class="option-select-wrapper">
+                        <select class="option-select" id="optionSelect" aria-label="Select timetable option">
+                            <option value="1">Option 1 — Most Preferred</option>
+                            <option value="2">Option 2 — Second Choice</option>
+                            <option value="3">Option 3 — Third Choice</option>
+                        </select>
+                    </div>
+
                     <!-- Timetable Tabs -->
                     <div class="timetable-tabs" id="timetableTabs">
                         <button class="timetable-tab active" data-option="1">
@@ -1318,6 +1480,47 @@ $course_catalog = buildCourseCatalog($db);
         };
         let currentOption = 1;
 
+        // Hamburger menu
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        hamburgerBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+        });
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        });
+
+        // Close sidebar when nav item clicked (mobile)
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+            });
+        });
+
+        // Option select (mobile) synced with tabs
+        const optionSelect = document.getElementById('optionSelect');
+        optionSelect.addEventListener('change', () => {
+            const option = optionSelect.value;
+            currentOption = parseInt(option);
+            timetableTabs.forEach(t => t.classList.remove('active'));
+            timetableContents.forEach(c => c.classList.remove('active'));
+            const matchingTab = document.querySelector(`.timetable-tab[data-option="${option}"]`);
+            if (matchingTab) matchingTab.classList.add('active');
+            document.getElementById(`timetableOption${option}`).classList.add('active');
+        });
+
+        // Sync tab clicks to select
+        timetableTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                optionSelect.value = tab.getAttribute('data-option');
+            });
+        });
+
         // Sidebar navigation
         const sidebarLinks = document.querySelectorAll('.sidebar-link');
         const sections = document.querySelectorAll('.content-section');
@@ -1404,15 +1607,23 @@ $course_catalog = buildCourseCatalog($db);
         function displayAvailableCourses(optionNum, searchTerm = '') {
             const container = document.getElementById(`availableCourses${optionNum}`);
             container.innerHTML = '';
+
+            // Show prompt if no search term
+            if (!searchTerm.trim()) {
+                container.innerHTML = '<p style="color:#6b7280;text-align:center;padding:20px 0;">Type above to search for courses</p>';
+                return;
+            }
             
+            let count = 0;
             Object.entries(courseCatalog).forEach(([code, course]) => {
                 if (completedCourses.includes(code)) return;
                 
-                if (searchTerm && !code.toLowerCase().includes(searchTerm.toLowerCase()) && 
+                if (!code.toLowerCase().includes(searchTerm.toLowerCase()) && 
                     !course.name.toLowerCase().includes(searchTerm.toLowerCase())) {
                     return;
                 }
                 
+                count++;
                 const prereqText = course.prerequisites.length > 0 
                     ? `Prerequisites: ${course.prerequisites.join(', ')}` 
                     : 'No prerequisites';
@@ -1433,6 +1644,10 @@ $course_catalog = buildCourseCatalog($db);
                 card.addEventListener('click', () => toggleCourseSelection(code, optionNum));
                 container.appendChild(card);
             });
+
+            if (count === 0) {
+                container.innerHTML = '<p style="color:#6b7280;text-align:center;padding:20px 0;">No courses found matching your search</p>';
+            }
         }
 
         // Toggle course selection - NOW OPTION SPECIFIC
