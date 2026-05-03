@@ -127,7 +127,7 @@ Browser (Student / Admin)
 
 - [XAMPP](https://www.apachefriends.org/) — includes Apache 2.4, PHP 8.0, MariaDB 10.4, phpMyAdmin
 - Git
-- A Gmail account with an [App Password](https://myaccount.google.com/apppasswords) enabled (for SMTP)
+- A Gmail account with an [App Password](https://myaccount.google.com/apppasswords) enabled (for SMTP) [currently disabled for live production]
 
 ### Production
 
