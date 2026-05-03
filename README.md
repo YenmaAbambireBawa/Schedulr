@@ -1,5 +1,4 @@
-================================================================================
-#SCHEDULR — COURSE PRE-SELECTION AND AUTO-REGISTRATION SYSTEM
+SCHEDULR — COURSE PRE-SELECTION AND AUTO-REGISTRATION SYSTEM
 Documentation File
 ================================================================================
 
