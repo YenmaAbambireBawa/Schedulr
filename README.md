@@ -1,303 +1,434 @@
-SCHEDULR — COURSE PRE-SELECTION AND AUTO-REGISTRATION SYSTEM
-Documentation File
-================================================================================
+# Schedulr — Course Pre-Selection and Auto-Registration System
 
-Project Title  : Design and Evaluation of a Course Pre-Selection and
-                 Auto-Registration System
-System Name    : Schedulr
-Author         : Yenma Abambire Bawa
-Student ID     : 29692026
-Programme      : B.Sc. Computer Science
-Institution    : Ashesi University
-Year           : 2026
-Supervisor     : Dr. Sampson Dankyi Asare
+> **Live Demo:** [https://schedulr-production.up.railway.app/](https://schedulr-production.up.railway.app/)
+> **Repository:** [https://github.com/YenmaAbambireBawa/Schedulr](https://github.com/YenmaAbambireBawa/Schedulr)
 
---------------------------------------------------------------------------------
-QUICK LINKS
---------------------------------------------------------------------------------
+---
 
-Live Application  : https://schedulr-production.up.railway.app/
-GitHub Repository : https://github.com/YenmaAbambireBawa/Schedulr
+## Table of Contents
 
---------------------------------------------------------------------------------
-WHAT IS SCHEDULR?
---------------------------------------------------------------------------------
+1. [Overview](#overview)
+2. [Features](#features)
+3. [System Architecture](#system-architecture)
+4. [Technology Stack](#technology-stack)
+5. [Prerequisites](#prerequisites)
+6. [Installation & Local Setup](#installation--local-setup)
+7. [Database Setup](#database-setup)
+8. [Environment Variables](#environment-variables)
+9. [Running the Application](#running-the-application)
+10. [Deployment (Railway)](#deployment-railway)
+11. [Project Structure](#project-structure)
+12. [API Endpoints](#api-endpoints)
+13. [Algorithm Overview](#algorithm-overview)
+14. [Known Limitations](#known-limitations)
+15. [Author](#author)
 
-Schedulr is a PHP and MariaDB web application that redesigns the course
-registration experience at Ashesi University. Instead of competing in a
-real-time rush when the CAMU registration window opens, students pre-select
-up to three ranked timetable combinations in advance. When registration
-begins, the system automatically checks each option through a gate-based
-algorithm (prerequisite check → clash detection → seat availability) and
-registers the highest-ranked feasible option on the student's behalf.
+---
 
-The live prototype is deployed and accessible at:
-  https://schedulr-production.up.railway.app/
+## Overview
 
-All source code is available at:
-  https://github.com/YenmaAbambireBawa/Schedulr
+**Schedulr** is a PHP and MariaDB web application designed for Ashesi University that reimagines the course registration experience. Instead of competing in a stressful real-time rush when the registration window opens, students pre-select and rank up to **three full timetable combinations** in advance. When registration begins, Schedulr automatically checks each option through a gate-based algorithm and registers the best feasible option on the student's behalf.
 
---------------------------------------------------------------------------------
-TECHNOLOGY STACK
---------------------------------------------------------------------------------
+This project was designed and evaluated as an undergraduate Computer Science thesis at Ashesi University (2026), supervised by Dr. Sampson Dankyi Asare.
 
-  Backend        : PHP 8.0
-  Database       : MariaDB 10.4
-  Frontend       : HTML5, CSS3, Vanilla JavaScript
-  Email          : PHPMailer (Gmail SMTP, STARTTLS port 587)
-  Local server   : XAMPP (Apache 2.4 + PHP 8.0 + MariaDB 10.4)
-  Production     : Railway PaaS (auto-deploy from GitHub)
-  Security       : bcrypt (passwords), AES-256-CBC (credentials), PDO
+**The problem it solves:**
+- Server crashes caused by simultaneous logins
+- Timetable conflicts only caught after submission
+- Seat allocation based on internet speed rather than academic need
+- No backup mechanism when a first-choice course is full
 
---------------------------------------------------------------------------------
-HOW TO COMPILE / INSTALL / DEPLOY
---------------------------------------------------------------------------------
+---
 
-There is no compilation step. PHP is an interpreted language. You run the
-application by placing the files on a web server with PHP and MariaDB.
+## Features
 
---- OPTION A: LOCAL DEVELOPMENT (XAMPP) ---
+| Feature | Description |
+|---|---|
+| **Pre-selection dashboard** | Students build up to 3 ranked timetable options before the window opens |
+| **Gate-based algorithm** | Prerequisite check → Clash detection → Seat availability, in sequence |
+| **Auto-registration** | Highest-ranked feasible option is committed automatically |
+| **Email verification** | Secure token-based email confirmation before submission is processed |
+| **CAMU simulator** | Five-step bot pipeline simulating myCAMU login and enrolment |
+| **Live status polling** | Dashboard polls registration status every 10 seconds |
+| **Admin panel** | Full CRUD across users, courses, departments, prerequisites, registrations |
+| **Role-based access** | Student and admin roles enforced server-side on every endpoint |
+| **Security** | bcrypt passwords, AES-256-CBC credential encryption, PDO prepared statements |
+| **Waitlist fallback** | Students placed on waitlist automatically if all three options fail |
 
-Step 1. Install XAMPP
-  Download from https://www.apachefriends.org/
-  This gives you Apache, PHP 8.0, and MariaDB in one package.
+---
 
-Step 2. Clone the repository
-  git clone https://github.com/YenmaAbambireBawa/Schedulr.git
+## System Architecture
 
-Step 3. Move files into htdocs
-  Windows : C:\xampp\htdocs\Schedulr
-  macOS   : /Applications/XAMPP/htdocs/Schedulr
-  Linux   : /opt/lampp/htdocs/Schedulr
+```
+Browser (Student / Admin)
+        │
+        ▼
+┌─────────────────────────────────────────────┐
+│              PHP Page Layer                  │
+│  index.html · login · questionnaire ·        │
+│  dashboard · reg-pending · reg-success ·     │
+│  camu-simulator · admin dashboard            │
+└─────────────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────┐
+│         Auth Middleware (Auth.php)           │
+│  bcrypt · RBAC · sessions · login_attempts  │
+└─────────────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────┐
+│              API / Core Logic                │
+│  submit-registration · verify-email ·        │
+│  registration-status · admin CRUD           │
+│                                             │
+│  ┌─────────────────────────────────────┐   │
+│  │    Auto-Registration Engine          │   │
+│  │  Gate 1: Prerequisite Check O(c·p)  │   │
+│  │  Gate 2: Clash Detection  O(c²)     │   │
+│  │  Gate 3: Seat Check       O(c)      │   │
+│  │  Commit enrolment (transaction)     │   │
+│  └─────────────────────────────────────┘   │
+└─────────────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────┐
+│         MariaDB 10.4 (schedulr_db)           │
+│  11 tables · 2 views · FK constraints        │
+└─────────────────────────────────────────────┘
+        │
+        ▼
+┌─────────────────────────────────────────────┐
+│     Railway PaaS · Apache 2.4 · PHP 8.0      │
+│     GitHub auto-deploy · HTTPS · SMTP TLS    │
+└─────────────────────────────────────────────┘
+```
 
-Step 4. Start XAMPP
-  Open the XAMPP Control Panel and start Apache and MySQL.
+---
 
-Step 5. Create the database
-  a. Open http://localhost/phpmyadmin in your browser
-  b. Create a new database named: schedulr_db
-  c. Select schedulr_db, click Import, upload database/setup.sql
-  d. Click Go
+## Technology Stack
 
-  OR via command line:
-    mysql -u root -p
-    CREATE DATABASE schedulr_db;
-    USE schedulr_db;
-    SOURCE /path/to/Schedulr/database/setup.sql;
+| Layer | Technology |
+|---|---|
+| Backend | PHP 8.0 |
+| Database | MariaDB 10.4 |
+| Frontend | HTML5, CSS3, JavaScript (vanilla) |
+| Email | PHPMailer (Gmail SMTP, STARTTLS port 587) |
+| Password hashing | bcrypt (`password_hash` / `password_verify`) |
+| Credential encryption | AES-256-CBC with random 16-byte IV per record |
+| Local dev server | XAMPP (Apache 2.4 + PHP 8.0 + MariaDB 10.4) |
+| Production hosting | Railway (PaaS) |
+| Version control | Git / GitHub |
 
-Step 6. Configure environment variables
-  Create a file named .env in the project root with the following values:
+---
 
-    DB_HOST=localhost
-    DB_NAME=schedulr_db
-    DB_USER=root
-    DB_PASS=
+## Prerequisites
 
-    ENCRYPTION_KEY=<32 random characters>
+### Local Development
 
-    MAIL_HOST=smtp.gmail.com
-    MAIL_PORT=587
-    MAIL_USERNAME=<your Gmail address>
-    MAIL_PASSWORD=<your Gmail App Password>
-    MAIL_FROM=<your Gmail address>
-    MAIL_FROM_NAME=Schedulr
+- [XAMPP](https://www.apachefriends.org/) — includes Apache 2.4, PHP 8.0, MariaDB 10.4, phpMyAdmin
+- Git
+- A Gmail account with an [App Password](https://myaccount.google.com/apppasswords) enabled (for SMTP)
 
-  To generate an ENCRYPTION_KEY:
-    openssl rand -hex 16
+### Production
 
-  To generate a Gmail App Password:
-    Go to https://myaccount.google.com/apppasswords
-    Select "Mail" and your device, then copy the 16-character password.
+- A [Railway](https://railway.app/) account
+- A GitHub account (Railway deploys directly from your repository)
 
-Step 7. Run the application
-  Open http://localhost/Schedulr in your browser.
+---
 
---- OPTION B: PRODUCTION DEPLOYMENT (RAILWAY) ---
+## Installation & Local Setup
 
-Step 1. Push code to GitHub
-  git add .
-  git commit -m "Deploy"
-  git push origin main
+### Step 1 — Clone the repository
 
-Step 2. Create a Railway project
-  Go to https://railway.app/
-  Click New Project -> Deploy from GitHub repo
-  Select YenmaAbambireBawa/Schedulr
+```bash
+git clone https://github.com/YenmaAbambireBawa/Schedulr.git
+cd Schedulr
+```
 
-Step 3. Add a database
-  Inside your Railway project, click + New -> Database -> MySQL
-  Railway will automatically inject database connection variables.
+### Step 2 — Start XAMPP
 
-Step 4. Set environment variables in Railway
-  Go to your service -> Variables and add:
-    ENCRYPTION_KEY=<32 random characters>
-    MAIL_HOST=smtp.gmail.com
-    MAIL_PORT=587
-    MAIL_USERNAME=<your Gmail>
-    MAIL_PASSWORD=<your App Password>
-    MAIL_FROM=<your Gmail>
-    MAIL_FROM_NAME=Schedulr
+Open the XAMPP Control Panel and start both **Apache** and **MySQL (MariaDB)**.
 
-Step 5. Import the database schema
-  Connect to your Railway database using the provided connection string:
-    mysql -h <HOST> -P <PORT> -u <USER> -p <DATABASE> < database/setup.sql
+### Step 3 — Place files in htdocs
 
-Step 6. Done
-  Railway auto-deploys on every push to main.
-  The live instance is at: https://schedulr-production.up.railway.app/
+Copy the entire `Schedulr` folder into your XAMPP `htdocs` directory:
 
---------------------------------------------------------------------------------
-PROJECT STRUCTURE
---------------------------------------------------------------------------------
+- **Windows:** `C:\xampp\htdocs\Schedulr`
+- **macOS:** `/Applications/XAMPP/htdocs/Schedulr`
+- **Linux:** `/opt/lampp/htdocs/Schedulr`
 
+### Step 4 — Configure environment variables
+
+Create a `.env` file in the project root (or set the values directly in `config/database.php` and `config/email.php` for local dev):
+
+```env
+DB_HOST=localhost
+DB_NAME=schedulr_db
+DB_USER=root
+DB_PASS=
+
+ENCRYPTION_KEY=your-32-character-random-key-here
+
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-gmail@gmail.com
+MAIL_PASSWORD=your-gmail-app-password
+MAIL_FROM=your-gmail@gmail.com
+MAIL_FROM_NAME=Schedulr
+```
+
+> **Important:** `ENCRYPTION_KEY` must be exactly 32 characters. Generate one with:
+> ```bash
+> openssl rand -hex 16
+> ```
+
+---
+
+## Database Setup
+
+### Option A — Using phpMyAdmin (recommended for local dev)
+
+1. Open [http://localhost/phpmyadmin](http://localhost/phpmyadmin) in your browser
+2. Click **New** and create a database named `schedulr_db`
+3. Select `schedulr_db`, click the **Import** tab
+4. Upload `database/setup.sql` from the project root
+5. Click **Go**
+
+### Option B — Using the command line
+
+```bash
+mysql -u root -p
+```
+
+```sql
+CREATE DATABASE schedulr_db;
+USE schedulr_db;
+SOURCE /path/to/Schedulr/database/setup.sql;
+```
+
+### What setup.sql creates
+
+- 11 tables: `users`, `courses`, `departments`, `course_sections`, `time_slots`, `course_prerequisites`, `course_registrations`, `student_questionnaires`, `sessions`, `login_attempts`, `password_resets`
+- 2 views: `v_courses_with_dept`, `v_course_prerequisites`
+- Seed data: 64 courses, 7 departments, 109 sections, 6 time slots, 52 prerequisite relationships
+
+### Creating an admin account
+
+After database setup, insert an admin user directly:
+
+```sql
+INSERT INTO users (full_name, email, password_hash, role, is_active)
+VALUES (
+  'Admin Name',
+  'admin@ashesi.edu.gh',
+  '$2y$10$...', -- generate with: password_hash('yourpassword', PASSWORD_BCRYPT)
+  'admin',
+  1
+);
+```
+
+Or use the registration page and manually update the `role` column to `'admin'` via phpMyAdmin.
+
+---
+
+## Environment Variables
+
+| Variable | Description | Example |
+|---|---|---|
+| `DB_HOST` | Database host | `localhost` |
+| `DB_NAME` | Database name | `schedulr_db` |
+| `DB_USER` | Database username | `root` |
+| `DB_PASS` | Database password | *(empty for local XAMPP)* |
+| `ENCRYPTION_KEY` | 32-char AES key for myCAMU credential encryption | `a1b2c3d4e5f6...` |
+| `MAIL_HOST` | SMTP host | `smtp.gmail.com` |
+| `MAIL_PORT` | SMTP port | `587` |
+| `MAIL_USERNAME` | Gmail address | `yourapp@gmail.com` |
+| `MAIL_PASSWORD` | Gmail App Password | `xxxx xxxx xxxx xxxx` |
+| `MAIL_FROM` | From address in emails | `yourapp@gmail.com` |
+| `MAIL_FROM_NAME` | Display name in emails | `Schedulr` |
+
+---
+
+## Running the Application
+
+### Local
+
+1. Ensure XAMPP Apache and MySQL are running
+2. Navigate to [http://localhost/Schedulr](http://localhost/Schedulr) in your browser
+3. Register a student account, complete the questionnaire, and use the dashboard
+
+### Admin panel
+
+Navigate to [http://localhost/Schedulr/admin](http://localhost/Schedulr/admin) and log in with an admin-role account.
+
+### CAMU Simulator
+
+The simulator at `student/camu-simulator.php` runs the five-step bot pipeline (connect → authenticate → navigate → select → confirm). In **dummy mode** (default), it reads from `user_data/registrations.json`. In production mode, it would interact with the live myCAMU portal.
+
+---
+
+## Deployment (Railway)
+
+### Step 1 — Push your code to GitHub
+
+```bash
+git add .
+git commit -m "Initial commit"
+git push origin main
+```
+
+### Step 2 — Create a Railway project
+
+1. Go to [https://railway.app/](https://railway.app/) and sign in
+2. Click **New Project** → **Deploy from GitHub repo**
+3. Select `YenmaAbambireBawa/Schedulr`
+4. Railway will detect PHP and configure Apache automatically
+
+### Step 3 — Add a MariaDB database
+
+1. Inside your Railway project, click **+ New** → **Database** → **MySQL** (compatible with MariaDB)
+2. Railway will inject `MYSQL_URL`, `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE` automatically
+
+### Step 4 — Set environment variables
+
+In Railway → your service → **Variables**, add:
+
+```
+ENCRYPTION_KEY=your-32-char-key
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-gmail@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_FROM=your-gmail@gmail.com
+MAIL_FROM_NAME=Schedulr
+```
+
+### Step 5 — Import the database schema
+
+Connect to your Railway database using the provided connection string and run `setup.sql`:
+
+```bash
+mysql -h <RAILWAY_HOST> -P <PORT> -u <USER> -p <DATABASE> < database/setup.sql
+```
+
+### Step 6 — Deploy
+
+Railway auto-deploys on every push to `main`. Visit the Railway-generated URL (or your custom domain) to access the live app.
+
+**Live instance:** [https://schedulr-production.up.railway.app/](https://schedulr-production.up.railway.app/)
+
+---
+
+## Project Structure
+
+```
 Schedulr/
-  index.html                    Public landing page
-  about.html                    About page
-  schedulr-login.html           Login and registration UI
+├── index.html                  # Public landing page
+├── about.html                  # About page
+├── schedulr-login.html         # Login / registration UI
+│
+├── student/
+│   ├── questionnaire.php       # Onboarding form
+│   ├── dashboard.php           # Pre-selection dashboard (core UI)
+│   ├── registration-pending.php # Status page (polls every 10s)
+│   ├── registration-success.php # Confirmation page
+│   └── camu-simulator.php      # 5-step bot pipeline
+│
+├── api/
+│   ├── login.php               # POST: authenticate
+│   ├── register.php            # POST: create account
+│   ├── submit-registration.php # POST: save ranked options, encrypt, email
+│   ├── verify-email.php        # GET: validate token
+│   ├── registration-status.php # GET: return JSON status
+│   ├── resend-verification.php # POST: resend with rate limit
+│   ├── save-questionnaire.php  # POST: save onboarding data
+│   └── admin.php               # Multi-action CRUD admin endpoint
+│
+├── middleware/
+│   └── Auth.php                # RBAC, session management, bcrypt
+│
+├── config/
+│   ├── database.php            # PDO connection
+│   └── email.php               # PHPMailer SMTP config
+│
+├── models/
+│   └── User.php                # User model (create, verify, token)
+│
+├── helpers/
+│   └── Mailer.php              # Mailer helper wrapping PHPMailer
+│
+├── database/
+│   └── setup.sql               # Full schema + seed data
+│
+├── user_data/                  # Flat file cache (gitignored in production)
+│   └── registrations.json      # Dummy-mode registration store
+│
+└── vendor/                     # Composer dependencies (PHPMailer)
+```
 
-  student/
-    questionnaire.php           Onboarding form (programme, GPA, completed courses)
-    dashboard.php               Pre-selection dashboard — core student UI
-    registration-pending.php    Status page (polls server every 10 seconds)
-    registration-success.php    Confirmation page
-    camu-simulator.php          Five-step CAMU bot pipeline
+---
 
-  api/
-    login.php                   POST: authenticate user
-    register.php                POST: create account
-    submit-registration.php     POST: save ranked options, encrypt, send email
-    verify-email.php            GET: validate token from email link
-    registration-status.php     GET: return registration status as JSON
-    resend-verification.php     POST: resend verification email (rate limited)
-    save-questionnaire.php      POST: save onboarding profile
-    admin.php                   Multi-action CRUD endpoint (admin only)
+## API Endpoints
 
-  middleware/
-    Auth.php                    Role-based access, sessions, bcrypt
+| Endpoint | Method | Auth | Description |
+|---|---|---|---|
+| `api/login.php` | POST | None | Authenticate and create session |
+| `api/register.php` | POST | None | Create student account |
+| `api/submit-registration.php` | POST | Student | Save ranked options, encrypt credentials, send verification email |
+| `api/verify-email.php` | GET | None | Validate email token, update status |
+| `api/registration-status.php` | GET | Student | Return current registration status as JSON |
+| `api/resend-verification.php` | POST | Student | Resend verification email (2-min rate limit) |
+| `api/save-questionnaire.php` | POST | Student | Save onboarding profile |
+| `api/admin.php?action=*` | Multi | Admin | CRUD for all entities (9 actions) |
 
-  config/
-    database.php                PDO database connection
-    email.php                   PHPMailer SMTP configuration
+---
 
-  models/
-    User.php                    User model
+## Algorithm Overview
 
-  helpers/
-    Mailer.php                  PHPMailer wrapper
+The gate-based registration algorithm processes each student's three ranked options in order. For each option it applies three sequential gates:
 
-  database/
-    setup.sql                   Full schema + seed data (run this first)
+```
+FOR each ranked option (1 → 2 → 3):
+  Gate 1: Check all prerequisites          O(c · p)
+  Gate 2: Check all course pair clashes    O(c²)
+  Gate 3: Check all section capacities     O(c)
+  
+  If all gates pass:
+    BEGIN TRANSACTION
+      Decrement section capacities
+      Insert enrolment records
+      Update status → 'completed'
+    COMMIT
+    Send confirmation email
+    RETURN success
+  ELSE:
+    Try next option
 
-  user_data/
-    registrations.json          Dummy-mode registration store (flat file)
+If all three options fail:
+  Insert waitlist record
+  Update status → 'waitlisted'
+  Send waitlist notification
+```
 
-  vendor/                       Composer dependencies (PHPMailer)
+**Complexity:** O(n) overall for n students — linear and optimal. Per-student work is O(c·p + c²), effectively constant at Ashesi's scale (c ≤ 6, p ≤ 4).
 
---------------------------------------------------------------------------------
-DEFAULT ADMIN ACCESS
---------------------------------------------------------------------------------
+---
 
-After importing setup.sql, create an admin account by:
+## Known Limitations
 
-  1. Registering normally at /schedulr-login.html
-  2. Opening phpMyAdmin (local) or connecting to the Railway database
-  3. In the users table, find your row and change role from 'student' to 'admin'
-  4. Log in at /admin and verify access
+- **No live CAMU integration** — the CAMU simulator runs in dummy mode and does not execute real enrolments
+- **Partial course catalogue** — the database covers CS and Africana Studies courses only; official data for other departments was not available during development
+- **Simulated time slots** — section times are based on simulated data, not the official Ashesi timetable
+- **Fairness algorithm not implemented** — the need-based seat allocation model is fully specified in the thesis (Chapter 4) but requires institutional data not available during development
+- **Flat file / database inconsistency** — questionnaire data is cached in both `user_data/` and the `student_questionnaires` table; these should be unified in production
 
---------------------------------------------------------------------------------
-KEY API ENDPOINTS
---------------------------------------------------------------------------------
+---
 
-  POST  api/login.php                Authenticate and create session
-  POST  api/register.php             Create student account
-  POST  api/submit-registration.php  Save ranked options, encrypt, send email
-  GET   api/verify-email.php         Validate email verification token
-  GET   api/registration-status.php  Poll registration status (JSON)
-  POST  api/resend-verification.php  Resend verification (2-minute rate limit)
-  POST  api/save-questionnaire.php   Save onboarding profile
-  *     api/admin.php?action=*       Admin CRUD (9 actions, admin role required)
+## Author
 
---------------------------------------------------------------------------------
-DATABASE TABLES (schedulr_db)
---------------------------------------------------------------------------------
+**Yenma Abambire Bawa**
+B.Sc. Computer Science, Ashesi University, 2026
+Supervisor: Dr. Sampson Dankyi Asare
 
-  users                     User accounts and roles
-  courses                   64 courses across 7 departments
-  departments               7 departments
-  course_sections           109 course sections with time slots and capacity
-  time_slots                6 daily time slots
-  course_prerequisites      52 prerequisite relationships
-  course_registrations      Student registrations with ranked JSON options
-  student_questionnaires    Onboarding profiles
-  sessions                  PHP session persistence
-  login_attempts            Brute-force audit log
-  password_resets           Password reset tokens
-
-  Views:
-    v_courses_with_dept           Courses joined with department names
-    v_course_prerequisites        Human-readable prerequisite chains
-
---------------------------------------------------------------------------------
-SECURITY NOTES
---------------------------------------------------------------------------------
-
-  - Passwords: bcrypt via password_hash() / password_verify()
-  - myCAMU credentials: AES-256-CBC with random IV per record
-  - ENCRYPTION_KEY: must be stored as environment variable, never hardcoded
-  - All SQL queries: PDO prepared statements (prevents SQL injection)
-  - Sessions: regenerated on login (prevents session fixation)
-  - Cookies: httponly and secure flags set on remember-me tokens
-  - Admin routes: rejected server-side for student sessions
-  - Transport: HTTPS (Railway), STARTTLS on SMTP port 587
-
---------------------------------------------------------------------------------
-KNOWN LIMITATIONS
---------------------------------------------------------------------------------
-
-  1. No live CAMU integration — the simulator runs in dummy mode only.
-     Real integration would require access to CAMU's backend API.
-
-  2. Partial course catalogue — covers CS and Africana Studies only.
-     Other departments were not included due to data access constraints.
-
-  3. Simulated time slots — section times are not the official Ashesi
-     timetable, which was not available during development.
-
-  4. Fairness algorithm not implemented — the need-based seat allocation
-     model is fully specified in Chapter 4 of the thesis but requires
-     three institutional datasets not available during development:
-     graduation audit data, registration denial history, and credit
-     load minimums by year.
-
-  5. Flat file / database inconsistency — questionnaire data exists in
-     both user_data/ (flat file cache) and the student_questionnaires
-     table. These should be unified in a production deployment.
-
---------------------------------------------------------------------------------
-FURTHER DOCUMENTATION
---------------------------------------------------------------------------------
-
-  Full thesis:
-    Design and Evaluation of a Course Pre-Selection and Auto-Registration
-    System — Yenma Abambire Bawa, Ashesi University, 2026
-
-  README.md (full technical documentation):
-    https://github.com/YenmaAbambireBawa/Schedulr/blob/main/README.md
-
-  Live application:
-    https://schedulr-production.up.railway.app/
-
-  Source code:
-    https://github.com/YenmaAbambireBawa/Schedulr
-
---------------------------------------------------------------------------------
-CONTACT
---------------------------------------------------------------------------------
-
-  Author     : Yenma Abambire Bawa
-  Institution: Ashesi University, Department of Computer Science
-  Supervisor : Dr. Sampson Dankyi Asare
-  Year       : 2026
-
-END OF DOCUMENTATION
-================================================================================
+- **Live app:** [https://schedulr-production.up.railway.app/](https://schedulr-production.up.railway.app/)
+- **Repository:** [https://github.com/YenmaAbambireBawa/Schedulr](https://github.com/YenmaAbambireBawa/Schedulr)
